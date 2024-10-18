@@ -4,8 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>迷你AI助手</title>
+  <title>Mini Helper</title>
   <link rel="stylesheet" href="./assets/default.css">
+  <link rel="stylesheet" href="./assets/markdown.style.dark.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <link rel="stylesheet" href="./assets/index.css">
 </head>
 
@@ -14,7 +16,7 @@
   <div class="left">
     <!-- 头部logo -->
     <div class="header">
-      <h1>Mini AI Helper</h1>
+      <h1>Mini Helper</h1>
       <!-- 一些控制按钮 -->
       <div class="ctrl">
         <button class="iconfont" data-btn-type="agent">&#xe604; 智能体</button>
@@ -27,105 +29,18 @@
         <!-- 标题 -->
         <div class="title">
           <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
+          <h2 data-btn-type="open-conversation">最近对话最近对话最近对话最近对话</h2>
         </div>
         <!-- 控制按钮 -->
         <div class="ctrl">
           <button class="iconfont">&#xe605;</button>
+          <div class="btns">
+            <button class="iconfont" data-btn-type="pin-conversation">&#xe605; 置顶</button>
+            <button class="iconfont" data-btn-type="edit-conversation-title">&#xe605; 编辑标题</button>
+            <button class="iconfont" data-btn-type="delete-conversation">&#xe605; 删除</button>
+          </div>
         </div>
       </div>
-      <!-- ------------------------------------------------ -->
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-      <div class="item">
-        <!-- 标题 -->
-        <div class="title">
-          <span class="iconfont">&#xe604;&nbsp;</span>
-          <h2>最近对话最近对话最近对话最近对话</h2>
-        </div>
-        <!-- 控制按钮 -->
-        <div class="ctrl">
-          <button class="iconfont">&#xe605;</button>
-        </div>
-      </div>
-
-
-      <!-- ------------------------------------------------ -->
     </div>
     <!-- 底部添加信息按钮 -->
     <div class="creatr">
@@ -146,11 +61,46 @@
       <div class="right">
         <button class="iconfont" title="创建新对话" style="font-weight: bold;"
           data-btn-type="create-conversation">&#xe69b;</button>
-        <button class="iconfont" title="主题切换" style="margin-left: 10px;" data-btn-type="theme-switch">&#xe614;</button>
+        <button class="iconfont" title="主题切换" style="margin-left: 10px;" data-btn-type="switch-theme">&#xe614;</button>
       </div>
     </div>
     <!-- 对话记录 -->
-    <div class="content"></div>
+    <div class="content">
+      <div class="message-item">
+        <!-- 头像 -->
+        <div class="ai">AI</div>
+        <!-- 内容 -->
+        <div class="markdown">
+          今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？
+          今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？
+          今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？
+        </div>
+        <!-- 信息和控制按钮 -->
+        <div class="info"></div>
+      </div>
+      <div class="message-item">
+        <!-- 头像 -->
+        <div class="you">YOU</div>
+        <!-- 内容 -->
+        <div class="markdown">
+          今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？
+          今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？
+          今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？今天是个快乐的日子哈哈，你在干啥呢，你是个小可爱吗？
+        </div>
+        <!-- 信息和控制按钮 -->
+        <div class="info"></div>
+      </div>
+      <div class="message-item">
+        <!-- 头像 -->
+        <div class="ai">AI</div>
+        <!-- 内容 -->
+        <div class="markdown" id="message-item-3">
+
+        </div>
+        <!-- 信息和控制按钮 -->
+        <div class="info"></div>
+      </div>
+    </div>
     <!-- 输入框等 -->
     <div class="bottom">
       <!-- 输入框 -->
@@ -160,7 +110,7 @@
       <!-- 功能按钮 -->
       <div class="buttons">
         <button title="插入文件" class="iconfont" data-btn-type="insert-file">&#xe62b;</button>
-        <button title="清除历史记录" class="iconfont" data-btn-type="clear-context-history">&#xe6c7;</button>
+        <button title="清除历史记录" class="iconfont" data-btn-type="clear-history">&#xe6c7;</button>
         <button title="语音输入" class="iconfont" data-btn-type="voice-input">&#xe601;</button>
         <button title="当前对话配置" class="iconfont" data-btn-type="session-configuration">&#xe86c;</button>
         <!-- 一些提示信息 -->
@@ -173,6 +123,9 @@
 
   <!-- script -->
   <script src="./assets/index.js" type="module"></script>
+  <script src="./assets//highlight.min.js"></script>
+  <script src="./assets/./go.min.js"></script>
+  <script>hljs.highlightAll();</script>
 </body>
 
 </html>

@@ -40,7 +40,9 @@ body.dark {
   /** 文字颜色 */
   --color-text: #bebebe;
   /** 次要内容的文字颜色 */
-  --color-secondary-text: #515d70;
+  --color-secondary-text: #53aa94;
+  /** 强调文字颜色 */
+  --color-highlight-text: #59a1bd;
   /** 强调文字背景色 */
   --color-highlight-bg: #19412F;
   /** 按钮文字颜色 */
@@ -53,9 +55,22 @@ body.dark {
   --color-logo-text1: #6078ea;
   /** Logo文字渐变色 2 */
   --color-logo-text2: #17ead9;
+  /** 玩家头像渐变色1 */
+  --color-avatar1: #6078ea;
+  /** 玩家头像渐变色2 */
+  --color-avatar2: #17ead9;
+  /** ai头像渐变色1 */
+  --color-ai1: #6078ea;
+  /** ai头像渐变色2 */
+  --color-ai2: #17ead9;
+  /** 聊天背景气泡背景色 */
+  --color-chat-bubble-bg: #282A2B;
+  /** 头像背景色 */
+  --color-avatar-bg: #464E5C;
 }
 
-* {
+button,
+textarea {
   background-color: var(--color-bg);
 }
 
@@ -122,6 +137,7 @@ body>.left>.header>h1 {
   display: inline-block;
   padding-bottom: 20px;
   border-bottom: 2px solid var(--color-border);
+  user-select: none;
 }
 
 body>.left>.header>.ctrl {
@@ -155,6 +171,7 @@ body>.left>.content>.item>.title {
   align-items: center;
   white-space: nowrap;
   overflow: hidden;
+  color: var(--color-highlight-text);
 }
 
 body>.left>.content>.item>.title>* {
@@ -183,6 +200,24 @@ body>.left>.content>.item>.ctrl>button::before {
 
 body>.left>.content>.item>.ctrl>button:hover {
   opacity: 1;
+}
+
+body>.left>.content>.item>.ctrl>.btns {
+  position: absolute;
+  display: block;
+  width: 120px;
+  right: 40px;
+  top: -10px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+body>.left>.content>.item>.ctrl:hover>.btns {
+  opacity: 1;
+  z-index: 1;
 }
 
 body>.left>.creatr {
@@ -251,13 +286,84 @@ body>.main {
 
 .main>.content {
   flex-grow: 1;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.message-item {
+  display: block;
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.message-item>.you,
+.message-item>.ai {
+  position: absolute;
+  font-weight: bold;
+  position: absolute;
+  font-weight: bold;
+  user-select: none;
+  padding: 10px;
+  width: 50px;
+  line-height: 50px;
+  text-align: center;
+  top: -23px
+}
+
+.message-item>.ai {
+  background: linear-gradient(70deg, var(--color-ai1), var(--color-ai2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  left: .5em;
+
+}
+
+.message-item>.you {
+  background: linear-gradient(70deg, var(--color-avatar1), var(--color-avatar2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* .ai::after,
+.you::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 50px;
+  height: 20px;
+  background-color: var(--color-avatar-bg);
+  z-index: -1;
+  top: 24px;
+  left: 2px;
+  border-radius: 3px;
+}
+
+.you::after {
+  top: 24px;
+  left: 2px;
+} */
+
+.markdown {
+  margin: 0 4em;
+  padding: 0.92em;
+  border-radius: 5px;
+  background-color: var(--color-chat-bubble-bg);
+  line-height: 2em;
+}
+
+.markdown * {
+  font-size: 14px;
 }
 
 .main>.bottom {
-  height: calc(4em + 30px);
-  height: 6em;
+  height: 7em;
   position: relative;
   padding-top: 25px;
+  /* background-color: var(--color-bg); */
 }
 
 .bottom>.buttons {

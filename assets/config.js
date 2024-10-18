@@ -11,6 +11,37 @@ class Config {
   }
 }
 
+const EVENT_TYPE = {
+  /** 打开智能体列表 */
+  agent: 'agent',
+  /** 打开设置面板 */
+  globalSettings: 'global-settings',
+  /** 置顶对话 */
+  pinConversation: 'pin-conversation',
+  /** 编辑对话标题 */
+  editConversationTitle: 'edit-conversation-title',
+  /** 打开指定对话 */
+  openConversation: 'open-conversation',
+  /** 删除指定对话 */
+  deleteConversation: 'delete-conversation',
+  /** 创建新对话 */
+  createConversation: 'create-conversation',
+  /** 清除所有对话记录 */
+  clearAllConversations: 'clear-all-conversations',
+  /** 收起/隐藏侧边栏 */
+  hideAndShowSidebar: 'hide-and-show-sidebar',
+  /** 切换主题 */
+  switchTheme: 'switch-theme',
+  /** 插入文件 */
+  insertFile: 'insert-file',
+  /** 清除历史记录 */
+  clearHistory: 'clear-history',
+  /** 语音输入 */
+  voiceInput: 'voice-input',
+  /** 当前对话配置 */
+  conversationConfig: 'conversation-config',
+};
+
 // 从本地存储加载配置
 function loadConfigFromLocalStorage() {
   const storedConfig = localStorage.getItem('config');
@@ -35,5 +66,7 @@ const configProxy = new Proxy(config, {
 
 export {
   /** 配置信息 */
-  configProxy as config
+  configProxy as config,
+  /** 事件类型 */
+  EVENT_TYPE
 };

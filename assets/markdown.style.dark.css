@@ -1,0 +1,183 @@
+:root {
+  --background-color: #1e1e1e;
+  /* 背景色 */
+  --text-color: #ffffff;
+  /* 文字颜色 */
+  --link-color: #1e90ff;
+  /* 链接颜色 */
+  --code-background: #2e2e2e;
+  /* 代码块背景色 */
+  --code-color: #f8f8f2;
+  /* 代码块文字颜色 */
+  --code-border: #444444;
+  /* 代码块边框颜色 */
+  --table-border: #444444;
+  /* 表格边框颜色 */
+  --blockquote-border: #1e90ff;
+  /* 引用边框颜色 */
+  --task-list-check: #1e90ff;
+  /* 任务列表勾选颜色 */
+}
+
+.markdown h1 {
+  font-size: 1.6em;
+  margin-bottom: 0.6em;
+}
+
+.markdown h2 {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.markdown h3 {
+  font-size: 1.4em;
+  margin-bottom: 0.4em;
+}
+
+
+.markdown h4 {
+  font-size: 1.3em;
+  margin-bottom: 0.3em;
+}
+
+.markdown h5 {
+  font-size: 1.2em;
+  margin-bottom: 0.2em;
+}
+
+.markdown h6 {
+  font-size: 1.1em;
+  margin-bottom: 0.1em;
+}
+
+
+.markdown p {
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  color: var(--text-color);
+}
+
+.markdown a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.markdown a:hover {
+  text-decoration: underline;
+}
+
+.markdown strong {
+  color: var(--text-color);
+}
+
+.markdown em {
+  color: var(--text-color);
+}
+
+.markdown del {
+  color: #ff6347;
+  /* 删除线颜色 */
+}
+
+.markdown u {
+  text-decoration: underline;
+}
+
+.markdown blockquote {
+  border-left: 4px solid var(--blockquote-border);
+  padding-left: 10px;
+  color: var(--text-color);
+  margin: 10px 0;
+}
+
+.markdown pre {
+  background-color: var(--code-background);
+  color: var(--code-color);
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  border: 1px solid var(--code-border);
+  margin: 20px 0;
+  /* 调整代码块上下间距 */
+}
+
+.markdown code {
+  background-color: var(--code-background);
+  color: var(--code-color);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.markdown li {
+  margin: 5px 0;
+}
+
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.markdown th,
+.markdown td {
+  border: 1px solid var(--table-border);
+  padding: 8px;
+  text-align: left;
+}
+
+.markdown th {
+  background-color: #333333;
+  /* 表头背景色 */
+  color: var(--text-color);
+}
+
+.markdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin: 20px 0;
+  /* 调整图片上下间距 */
+}
+
+.markdown video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin: 20px 0;
+  /* 调整视频上下间距 */
+}
+
+.markdown .task-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.markdown .task-list li {
+  position: relative;
+  padding-left: 25px;
+}
+
+.markdown .task-list li input[type="checkbox"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.markdown .task-list li input[type="checkbox"]:checked+label {
+  color: var(--task-list-check);
+  text-decoration: line-through;
+}
