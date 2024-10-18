@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>迷你AI助手</title>
+  <link rel="stylesheet" href="./assets/default.css">
+  <link rel="stylesheet" href="./assets/index.css">
+</head>
+
+<body class="dark">
+  <!-- left -->
+  <div class="left">
+    <!-- 头部logo -->
+    <div class="header">
+      <h1>Mini AI Helper</h1>
+      <!-- 一些控制按钮 -->
+      <div class="ctrl">
+        <button class="iconfont" data-btn-type="agent">&#xe604; 智能体</button>
+        <button class="iconfont" data-btn-type="global-settings">&#xe64b; 设置</button>
+      </div>
+    </div>
+    <!-- 中间记录列表 -->
+    <div class="content">
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <!-- ------------------------------------------------ -->
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+      <div class="item">
+        <!-- 标题 -->
+        <div class="title">
+          <span class="iconfont">&#xe604;&nbsp;</span>
+          <h2>最近对话最近对话最近对话最近对话</h2>
+        </div>
+        <!-- 控制按钮 -->
+        <div class="ctrl">
+          <button class="iconfont">&#xe605;</button>
+        </div>
+      </div>
+
+
+      <!-- ------------------------------------------------ -->
+    </div>
+    <!-- 底部添加信息按钮 -->
+    <div class="creatr">
+      <button class="iconfont" data-btn-type="create-conversation">&#xe69b; 创建对话</button>
+      <button class="iconfont" data-btn-type="clear-all-conversations" title="清除所有对话记录">&#xe6c7;</button>
+    </div>
+  </div>
+  <!-- 左右的尺寸调整器 -->
+  <div class="resizer"></div>
+  <div class="main">
+    <!-- 头部标题和导航 -->
+    <div class="header">
+      <button class="iconfont" title="收起/隐藏侧边栏" data-btn-type="hide-and-show-sidebar">&#xe605;</button>
+      <!-- 对话标题 & 基本信息 -->
+      <div class="center">
+        <h2>迷你AI助手</h2>
+      </div>
+      <div class="right">
+        <button class="iconfont" title="创建新对话" style="font-weight: bold;"
+          data-btn-type="create-conversation">&#xe69b;</button>
+        <button class="iconfont" title="主题切换" style="margin-left: 10px;" data-btn-type="theme-switch">&#xe614;</button>
+      </div>
+    </div>
+    <!-- 对话记录 -->
+    <div class="content"></div>
+    <!-- 输入框等 -->
+    <div class="bottom">
+      <!-- 输入框 -->
+      <textarea id="message-box" placeholder="此处输入您的问题，按下“/”查看功能列表"></textarea>
+      <!-- 发生按钮 -->
+      <button class="send-button iconfont" title="发送消息" data-btn-type="message-occurred">&#xe60d;</button>
+      <!-- 功能按钮 -->
+      <div class="buttons">
+        <button title="插入文件" class="iconfont" data-btn-type="insert-file">&#xe62b;</button>
+        <button title="清除历史记录" class="iconfont" data-btn-type="clear-context-history">&#xe6c7;</button>
+        <button title="语音输入" class="iconfont" data-btn-type="voice-input">&#xe601;</button>
+        <button title="当前对话配置" class="iconfont" data-btn-type="session-configuration">&#xe86c;</button>
+        <!-- 一些提示信息 -->
+        <div class="tips">
+          当前使用模型为gpt4，对话总记录数为184，当前上下文为24。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- script -->
+  <script src="./assets/index.js" type="module"></script>
+</body>
+
+</html>
