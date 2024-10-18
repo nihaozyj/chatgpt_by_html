@@ -360,10 +360,10 @@ body>.main {
 }
 
 .main>.bottom {
-  height: 7em;
+  height: 11em;
   position: relative;
   padding-top: 25px;
-  /* background-color: var(--color-bg); */
+  background-color: var(--color-bg);
 }
 
 .bottom>.buttons {

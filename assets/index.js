@@ -1,9 +1,5 @@
 import { config, EVENT_TYPE } from './config.js';
 import { marked } from './marked.esm.js';
-// import { chat } from './api.js';
-import Api2d from '../index.js';
-
-console.log(Api2d);
 
 const resizer = document.querySelector('body>.resizer');
 const left = document.querySelector('body>.left');
@@ -134,7 +130,7 @@ const domStr = marked.parse(`# 欢迎来到Markdown测试
 
 ### 图片
 
-![示例图片](https://oaidalleapiprodscus.blob.core.windows.net/private/org-3DoJxlO3MUcdeUdqzmY1hJoo/user-SRwjESRqqs4kftCawg4pAjWA/img-bKBiIdMn9mDkGzRrYfii5djk.png?st=2024-10-18T17%3A16%3A02Z&se=2024-10-18T19%3A16%3A02Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-10-17T18%3A42%3A18Z&ske=2024-10-18T18%3A42%3A18Z&sks=b&skv=2024-08-04&sig=swgipi7FQbc7fHJv4X%2BsqnuJaDfqeCKDwiDc/fbevj0%3D)
+
 
 ### 代码块
 
