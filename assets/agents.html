@@ -43,9 +43,12 @@
       max-width: 960px;
       margin: 0 auto;
       padding: 30px;
-      padding-bottom: 0;
+      padding-bottom: 20px;
       overflow-y: auto;
       user-select: none;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     .content>.header {
@@ -53,6 +56,7 @@
       justify-content: space-between;
       width: 100%;
       align-items: center;
+      height: 40px;
     }
 
     .content>.header>button {
@@ -67,12 +71,23 @@
       margin-top: 30px;
       padding: 10px;
       border-radius: 5px;
+      overflow-y: auto;
+      flex-grow: 1;
     }
 
     .agent-content>.item {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 10px;
+    }
+
+    .agent-content>.item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
 
     .agent-content>.item .ctrl {
