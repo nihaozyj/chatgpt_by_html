@@ -16,11 +16,6 @@
 
 /******************************************************/
 
-/** 旋转动画 */
-.rotate {
-  animation: rotation 2s infinite linear;
-}
-
 @keyframes rotation {
   from {
     transform: rotate(0deg);
@@ -29,6 +24,11 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/** 旋转动画 */
+.rotate {
+  animation: rotation 2s infinite linear;
 }
 
 /** 主题配置 - 黑色主题 */
@@ -206,18 +206,6 @@ body>.left>.content>.item>.ctrl>button:hover {
 }
 
 body>.left>.content>.item>.ctrl>.btns {
-  /* position: absolute;
-  display: flex;
-  justify-content: space-between;
-  width: 100px;
-  right: 40px;
-  top: 0;
-  border-radius: 5px;
-  border: 1px solid var(--color-border);
-  opacity: 0;
-  background-color: var(--color-bg);
-  transition: all 0.3s ease;
-  z-index: -1; */
   position: absolute;
   display: block;
   width: 120px;
@@ -277,17 +265,6 @@ body>.main {
   position: relative;
 }
 
-/* .main>.header::after {
-  content: '';
-  display: block;
-  position: absolute;
-  width: calc(100% + 20px);
-  height: 1px;
-  bottom: 0;
-  left: -12px;
-  background-color: var(--color-border);
-} */
-
 .main>.header button {
   font-size: 1.5em;
   padding: 0;
@@ -319,13 +296,9 @@ body>.main {
 .message-item>.ai {
   position: absolute;
   font-weight: bold;
-  position: absolute;
-  font-weight: bold;
   user-select: none;
   padding: 10px;
-  width: 50px;
-  text-align: center;
-  top: -23px
+  text-align: right;
 }
 
 .message-item>.ai {
@@ -335,7 +308,6 @@ body>.main {
   -webkit-text-fill-color: transparent;
   display: inline-block;
   left: .5em;
-
 }
 
 .message-item>.you {
@@ -345,25 +317,6 @@ body>.main {
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
-
-/* .ai::after,
-.you::after {
-  content: '';
-  display: block;
-  position: absolute;
-  width: 50px;
-  height: 20px;
-  background-color: var(--color-avatar-bg);
-  z-index: -1;
-  top: 24px;
-  left: 2px;
-  border-radius: 3px;
-}
-
-.you::after {
-  top: 24px;
-  left: 2px;
-} */
 
 .markdown {
   margin: 0 4em;
@@ -387,12 +340,14 @@ body>.main {
 
 .bottom>.buttons {
   display: flex;
+  position: absolute;
   justify-content: left;
   align-items: center;
   width: 100%;
   background-color: var(--color-bg);
-  padding: 10px 0;
-  position: absolute;
+  padding-top: 10px;
+  padding-bottom: 14px;
+  z-index: 1;
 }
 
 .bottom>.buttons>* {
@@ -428,6 +383,7 @@ body>.main {
   resize: none;
   padding: .5em 50px .5em 1em;
   line-height: 1.5em;
+  z-index: 2;
 }
 
 .main>.bottom>button {
