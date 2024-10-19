@@ -1,11 +1,31 @@
 import { Agent, roleType } from './agent';
 
+class Content {
+  /**
+   * 消息类型
+   * @type {'text' | 'file_url' | 'image_url'}
+   */
+  type = '';
+  /**
+   * 当消息类型位文本时，对象有该属性，如 {text: 'hello world', type: 'text'}
+   */
+  text = '';
+  /**
+   * 当类型为非文本时，对象有该属性，如 {url: 'https://example.com/image.jpg', type: 'image_url', name: 'image.jpg}
+   */
+  name = '';
+  /**
+   * 当类型为非文本时，对象有该属性，如 {url: 'https://example.com/image.txt', type: 'file_url', name: 'image.jpg}
+   */
+  url = '';
+}
+
 /** 消息类，代表一次对话的消息 */
 class Message {
   /**
    * 构造函数
    * @param {keyof roleType} role 消息的角色，"user"表示用户，"agent"表示智能体
-   * @param {string} message 消息内容
+   * @param {string | Content[]} message 消息内容
    * @param {number} timestamp 消息发送时间
    */
   constructor(role, message, timestamp) {
@@ -17,6 +37,13 @@ class Message {
 
 /** 会话类，代表一次对话 */
 class Conversation {
+
+  /** 会话唯一编号 */
+  id = '';
+
+  /** 会话标题 */
+  title = '';
+
   /**
    * 会话内容
    * @type {Message[]}
@@ -62,5 +89,6 @@ class Conversation {
 
 export {
   Conversation,
-  Message
+  Message,
+  Content
 };

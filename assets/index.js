@@ -16,6 +16,33 @@ function createDom(html) {
   return tempDiv.firstChild;
 }
 
+/** 弹出层管理 */
+const popupManager = {
+  popups: [],
+  /**
+   * 弹出层入栈
+   * @param {{show: function, close: function}} popup - 弹出层 dom 节点
+   */
+  push(popup) {
+    this.popups[0]?.close();
+    this.popups.unshift(popup);
+    popup.show();
+  },
+  /**
+   * 弹出层出栈
+   */
+  break() {
+    this.popups.shift()?.close();
+  },
+
+  /**
+   * 弹出层全部关闭
+   */
+  root() {
+    this.popups.forEach(popup => popup.close());
+    this.popups = [];
+  }
+};
 
 /**
  * 初始化表单值的函数
@@ -179,7 +206,35 @@ adjustHeight.call(textarea);
 /**  ------------------- 监听并处理所有按键事件 -------------------  */
 const btnEventHandlers = {
   [EVENT_TYPE.agent]: () => {
-
+    fetch('/assets/agents.html').then(response => {
+      // 检查响应是否成功
+      if (!response.ok) {
+        throw new Error('网络响应失败');
+      }
+      return response.text(); // 将响应转换为文本
+    }).then(html => {
+      // 处理获取到的 HTML 文本
+      const dom = createDom(html);
+      // initializeForm(dom, Agent.createAgent());
+      // 创建弹出层
+      popupManager.push(createPopups(dom));
+      const cancelEvent = () => {
+        document.removeEventListener(EVENT_TYPE.saveConfig, handerSave);
+        document.removeEventListener(EVENT_TYPE.cancelSaveConfig, handerCancel);
+      };
+      const handerSave = () => {
+        popupManager.break();
+        cancelEvent();
+      };
+      const handerCancel = () => {
+        popupManager.break();
+        cancelEvent();
+      };
+      document.addEventListener(EVENT_TYPE.saveConfig, handerSave);
+      document.addEventListener(EVENT_TYPE.cancelSaveConfig, handerCancel);
+    }).catch(error => {
+      console.error('获取 HTML 时出错:', error);
+    });
   },
   [EVENT_TYPE.globalSettings]: () => {
     fetch('/assets/setting.html').then(response => {
@@ -192,20 +247,20 @@ const btnEventHandlers = {
       // 处理获取到的 HTML 文本
       const dom = createDom(html);
       initializeForm(dom, Agent.createAgent());
-      const { show, close } = createPopups(dom);
+      // 创建弹出层
+      popupManager.push(createPopups(dom));
       const cancelEvent = () => {
         document.removeEventListener(EVENT_TYPE.saveConfig, handerSave);
         document.removeEventListener(EVENT_TYPE.cancelSaveConfig, handerCancel);
       };
       const handerSave = () => {
-        close();
+        popupManager.break();
         cancelEvent();
       };
       const handerCancel = () => {
-        close();
+        popupManager.break();
         cancelEvent();
       };
-      show();
       document.addEventListener(EVENT_TYPE.saveConfig, handerSave);
       document.addEventListener(EVENT_TYPE.cancelSaveConfig, handerCancel);
     }).catch(error => {
@@ -262,29 +317,7 @@ document.addEventListener('click', (event) => {
   btnEventHandlers[btnType]();
 });
 
-const domStr = marked.parse(`# 欢迎来到Markdown测试
-
-这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。这是一个**加粗**的文本示例。
-
-列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表列表
-
-## 列表
-
-- 项目一
-- 项目二
-- 项目三
-
-### 链接
-
-[点击这里访问OpenAI](https://www.openai.com)
-
-### 图片
-
-
-
-### 代码块
-
-\`\`\` python
+const domStr = marked.parse(`\`\`\` python
 def hello_world():
     print("Hello, World!")
 \`\`\`
@@ -300,4 +333,4 @@ document.getElementsByClassName('loading')[0].addEventListener('animationend', (
 });
 
 
-btnEventHandlers[EVENT_TYPE.globalSettings]();
+btnEventHandlers[EVENT_TYPE.agent]();
