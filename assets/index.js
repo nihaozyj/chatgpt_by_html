@@ -68,7 +68,7 @@ function adjustHeight() {
   const newHeight = Math.min(this.scrollHeight, maxHeight);
   // 更新文本框高度
   this.style.height = `${newHeight}px`;
-  ctrlBox.style.bottom = `calc(${newHeight}px + 1em)`;
+  ctrlBox.style.bottom = `${newHeight}px`;
 }
 adjustHeight.call(textarea);
 

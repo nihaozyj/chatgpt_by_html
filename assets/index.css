@@ -39,6 +39,8 @@ body.dark {
   --color-border: #353535;
   /** 文字颜色 */
   --color-text: #bebebe;
+  /** 警告文字颜色 */
+  --color-warn-text: #7a292c;
   /** 次要内容的文字颜色 */
   --color-secondary-text: #53aa94;
   /** 强调文字颜色 */
@@ -82,7 +84,8 @@ body {
   min-width: 850px;
   min-height: 500px;
   overflow: hidden;
-  color: var(--color-text) !important;
+  color: var(--color-text);
+  line-height: 1.5em;
 }
 
 input[type="password"],
@@ -203,6 +206,18 @@ body>.left>.content>.item>.ctrl>button:hover {
 }
 
 body>.left>.content>.item>.ctrl>.btns {
+  /* position: absolute;
+  display: flex;
+  justify-content: space-between;
+  width: 100px;
+  right: 40px;
+  top: 0;
+  border-radius: 5px;
+  border: 1px solid var(--color-border);
+  opacity: 0;
+  background-color: var(--color-bg);
+  transition: all 0.3s ease;
+  z-index: -1; */
   position: absolute;
   display: block;
   width: 120px;
@@ -215,8 +230,13 @@ body>.left>.content>.item>.ctrl>.btns {
   z-index: -1;
 }
 
+body>.left>.content>.item>.ctrl>.btns>button:nth-child(3) {
+  color: var(--color-warn-text)
+}
+
 body>.left>.content>.item>.ctrl:hover>.btns {
   opacity: 1;
+  /* z-index: 999; */
   z-index: 1;
 }
 
@@ -270,7 +290,6 @@ body>.main {
 
 .main>.header button {
   font-size: 1.5em;
-  line-height: 1.5em;
   padding: 0;
   margin: 0;
 }
@@ -305,7 +324,6 @@ body>.main {
   user-select: none;
   padding: 10px;
   width: 50px;
-  line-height: 50px;
   text-align: center;
   top: -23px
 }
@@ -352,11 +370,12 @@ body>.main {
   padding: 0.92em;
   border-radius: 5px;
   background-color: var(--color-chat-bubble-bg);
-  line-height: 2em;
+  font-size: 14px;
 }
 
-.markdown * {
-  font-size: 14px;
+.markdown>*:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .main>.bottom {
@@ -370,8 +389,9 @@ body>.main {
   display: flex;
   justify-content: left;
   align-items: center;
-  height: 30px;
-  padding-top: 15px;
+  width: 100%;
+  background-color: var(--color-bg);
+  padding: 10px 0;
   position: absolute;
 }
 

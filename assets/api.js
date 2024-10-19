@@ -1,61 +1,79 @@
-/**
- * @param {string} base_url 接口地址
- * @param {string} apiKey 接口密钥
- * @param {(status: 'success'|'error'|'complete', message: string, error: string) => void} callback 回调函数，接收三个参数：状态，消息内容，错误信息
- */
-async function chat(base_url, apiKey, callback) {
-  try {
-    const response = await fetch(base_url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o', // 或 'gpt-4omini'
-        messages: [
-          { role: 'user', content: '你好，GPT！' }
-        ],
-        stream: true // 开启流式响应
-      })
-    });
+export function createChatApi() {
+  const controller = new AbortController();
+  const signal = controller.signal;
 
-    if (!response.ok) {
-      callback('error', null, `HTTP error! status: ${response.status}`);
-      return;
-    }
+  async function chat(baseUrl, apiKey, body, callback) {
+    try {
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'Cache-Control': 'no-cache',
+          'Expires': '0'
+        },
+        body: JSON.stringify(body),
+        signal,// 将信号传递给 fetch
+        cache: 'no-store'
+      });
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let result = '';
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      result += decoder.decode(value, { stream: true });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let result = '';
 
-      // 处理流式响应，提取消息文本
-      const messages = result.split('\n').filter(line => line.trim() !== '');
-      for (const message of messages) {
-        try {
-          const parsedMessage = JSON.parse(message);
-          if (parsedMessage.choices && parsedMessage.choices.length > 0) {
-            const content = parsedMessage.choices[0].delta.content || '';
-            callback('success', content, null);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        // 处理每个数据块
+        const lines = chunk.split('\n'); // 按行分割
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const jsonData = line.slice(6); // 去掉 "data: " 前缀
+            if (jsonData === '[DONE]') {
+              callback(null, null); // 传输完成，返回 null
+              return;
+            }
+
+            try {
+              const parsedData = JSON.parse(jsonData);
+              const content = parsedData.choices[0]?.delta?.content || '';
+              result += content; // 累加内容
+              // 使用 try...catch 捕获回调函数中的错误
+              try {
+                callback(content, null); // 返回当前接收到的内容
+              } catch (callbackError) {
+                console.error('回调函数执行错误:', callbackError);
+                // 可以选择在这里处理回调错误，例如记录日志或发送通知
+              }
+            } catch (error) {
+              console.error('解析错误:', error);
+              callback(null, '解析错误');
+              console.log(line);
+            }
           }
-        } catch (e) {
-          callback('error', null, `解析消息时出错: ${e.message}`);
         }
       }
+
+      // 在所有数据读取完成后，返回最终结果
+      callback(result, null); // 最后一次回调，返回完整内容
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        callback(null, '请求已被取消');
+      } else {
+        callback(null, error.message);
+      }
     }
-    // 最后返回完整的结果
-    callback('complete', result, null);
-  } catch (error) {
-    callback('error', null, `请求过程中发生错误: ${error.message}`);
   }
+
+  function cancel() {
+    controller.abort(); // 取消请求
+  }
+
+  return { chat, cancel };
 }
-
-
-export {
-  chat
-};
