@@ -40,6 +40,10 @@ const EVENT_TYPE = {
   voiceInput: 'voice-input',
   /** 当前对话配置 */
   conversationConfig: 'conversation-config',
+  /** 保存当前配置 */
+  saveConfig: 'save-config',
+  /** 取消保存设置 */
+  cancelSaveConfig: 'cancel-save-config',
 };
 
 // 从本地存储加载配置

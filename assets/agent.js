@@ -11,19 +11,6 @@ const roleType = {
   assistant: 'assistant',
 };
 
-/** 智能体设定 */
-class Setting {
-  /**
-   * 构造函数
-   * @param {keyof roleType} role 智能体角色类型
-   * @param {string} message 设定要求
-   */
-  constructor(role, message) {
-    this.role = role;
-    this.message = message;
-  }
-}
-
 /** 智能体类 */
 class Agent {
   /**
@@ -40,21 +27,15 @@ class Agent {
 
   /**
    * 智能体设定
-   * @type {Setting[]}
+   * @type {string}
    */
-  setting = [];
+  setting = '';
 
   /**
    * 对话模型
    * @type {keyof typeof modelList}
    */
   model = null;
-
-  /**
-   * 对话摘要模型
-   * @type {keyof typeof modelList}
-   */
-  summary_model = null;
 
   /**
    * 自定义模型列表
@@ -90,11 +71,26 @@ class Agent {
    * 接口地址，格式为`http(s)://{接口地址}/v1`,默认为`http://api.openai.com/v1`
    */
   base_url = "";
+
+  /**
+   * 创建一个智能体实例
+   * @param {Agent?} agent 智能体配置,为空则创建一个默认值的智能体
+   */
+  static createAgent(agent) {
+    if (!agent) {
+      agent = new Agent();
+      agent.name = `agent-${Date.now()}`;
+      return agent;
+    }
+
+    const newAgent = JSON.parse(JSON.stringify(agent));
+    newAgent.id = `${Date.now()}${Math.floor(Math.random() * 100)}`;
+    newAgent.name = `agent-${newAgent.id.slice(-5)}`;
+  };
 }
 
 export {
   Agent,
   modelList,
   roleType,
-  Setting
 };

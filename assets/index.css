@@ -14,7 +14,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/******************************************************/
+/**************************** 一些动画样式 **************************/
 
 @keyframes rotation {
   from {
@@ -31,7 +31,35 @@
   animation: rotation 2s infinite linear;
 }
 
-/** 主题配置 - 黑色主题 */
+@keyframes loading-fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes loading-fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.fadeIn {
+  animation: loading-fadeIn .3s forwards;
+}
+
+.fadeOut {
+  animation: loading-fadeOut .3s forwards;
+}
+
+/** /**************************** 主题配置 - 黑色主题 /**************************** */
 body.dark {
   /** 背景色 */
   --color-bg: #252627;
@@ -323,6 +351,9 @@ body>.main {
   padding: 0.92em;
   border-radius: 5px;
   background-color: var(--color-chat-bubble-bg);
+}
+
+.markdown * {
   font-size: 14px;
 }
 
