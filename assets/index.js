@@ -152,9 +152,9 @@ function toggleLeft(state) {
 }
 
 /**  ------------------- 初始化配置 -------------------  */
-left.style.width = config.leftWidth + 'px';
 // 初始化侧边栏宽度
 toggleLeft(config.leftState);
+left.style.width = config.leftWidth + 'px';
 
 /** 调整侧边栏宽度 */
 resizer.addEventListener('mousedown', (event) => {
@@ -165,7 +165,7 @@ resizer.addEventListener('mousedown', (event) => {
 function resize(event) {
   document.body.style.userSelect = 'none';
   const newWidth = event.clientX;
-  if (newWidth > config.leftMinWidth && newWidth < config.leftMaxWidth) {
+  if (newWidth > config.leftMinWidth) {
     left.style.width = newWidth + 'px';
     config.leftWidth = newWidth;
   }

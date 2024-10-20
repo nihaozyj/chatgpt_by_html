@@ -3,11 +3,9 @@ class Config {
     /** 当前边栏的状态，hide表示隐藏，show表示显示 */
     this.leftState = 'show';
     /** 边栏的最小宽度 */
-    this.leftMinWidth = 240;
-    /** 边栏的最大宽度 */
-    this.leftMaxWidth = 500;
+    this.leftMinWidth = 230;
     /** 边栏的宽度 */
-    this.leftWidth = 200;
+    this.leftWidth = 300;
   }
 }
 

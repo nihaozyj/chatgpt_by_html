@@ -11,10 +11,11 @@
   <link rel="stylesheet" href="./assets/index.css">
 </head>
 
-<body class="dark">
+<body>
   <!-- 加载界面 -->
   <div class="loading"
     style="position: absolute; width: 100vw;height: 100vh; background-color: var(--color-bg);z-index: 999;">
+    <script>document.body.classList.add(localStorage.theme || 'dark')</script>
   </div>
   <!-- left -->
   <div class="left">
