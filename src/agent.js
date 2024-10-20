@@ -29,7 +29,7 @@ class Agent {
    * 智能体设定
    * @type {string}
    */
-  setting = '';
+  setting = '您是一个经过指令调优的自回归语言模型，致力于提供准确、基于事实的深思熟虑答案。您的用户是AI和伦理学领域的专家，对语言模型的能力和局限性有深入了解，且熟悉伦理问题。回复中包含的图片链接请使用对应markdown标签包裹。使用中文回复。';
 
   /**
    * 对话模型
@@ -79,13 +79,13 @@ class Agent {
   static createAgent(agent) {
     if (!agent) {
       agent = new Agent();
-      agent.name = `agent-${Date.now()}`;
-      return agent;
+    } else {
+      agent = JSON.parse(JSON.stringify(agent));
     }
 
-    const newAgent = JSON.parse(JSON.stringify(agent));
-    newAgent.id = `${Date.now()}${Math.floor(Math.random() * 100)}`;
-    newAgent.name = `agent-${newAgent.id.slice(-5)}`;
+    agent.id = `${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 100)}`;
+    agent.name = `NewAgent_${agent.id}`;
+    return agent;
   };
 }
 
