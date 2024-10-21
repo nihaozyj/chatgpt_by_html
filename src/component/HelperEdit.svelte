@@ -1,6 +1,7 @@
 <script>
   import ResizableModal from "./ResizableModal.svelte";
   export let isOpen = false;
+  export let title = "修改智能体";
 </script>
 
 <ResizableModal {isOpen} width={1} height={1}>
@@ -8,12 +9,8 @@
     <div class="content">
       <form id="setting-form" action="javascript:void(0);">
         <div class="header">
-          <button
-            on:click={() => {
-              isOpen = false;
-            }}
-            class="iconfont">&#xe6ff; 返回</button>
-          <h1>修改默认配置</h1>
+          <button on:click={() => (isOpen = false)} class="iconfont">&#xe6ff; 返回</button>
+          <h1>{title}</h1>
           <button class="iconfont">&#xe62b; 保存</button>
         </div>
         <!-- 设置内容 -->
@@ -103,7 +100,7 @@
 
   .popups-setting textarea {
     resize: none;
-    height: calc(1.5em * 3);
+    max-height: calc(1.5em * 3);
   }
 
   .popups-setting > .content {

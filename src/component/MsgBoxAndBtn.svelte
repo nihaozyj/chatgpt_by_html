@@ -22,7 +22,7 @@
       <button class="iconfont" title="修改当前配置文件">&#xe86c;</button>|
     </div>
     <div class="msgbox" bind:this={msgbox}>
-      <textarea bind:this={textarea} on:input={adjustHeight} placeholder={'输入问题，"ctrl+enter"发送消息,输入"/"触发命令提示'}> </textarea>
+      <textarea bind:this={textarea} on:input={adjustHeight} placeholder={'输入问题，"ctrl+enter"发送消息,输入"/"触发命令提示'}></textarea>
       <button class="iconfont">&#xe60d; 发送</button>
     </div>
   </div>

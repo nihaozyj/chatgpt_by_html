@@ -19,20 +19,31 @@ body.dark {
   --color-border: #353535;
   /** 文字颜色 */
   --color-text: #bebebe;
-  /** 警告文字颜色 */
-  --color-warn-text: #a72126;
   /** 次要内容的文字颜色 */
   --color-secondary-text: #53aa94;
+  /** 警告文字颜色 */
+  --color-warn-text: #a72126;
   /** 强调文字颜色 */
-  --color-highlight-text: #59a1bd;
+  --color-highlight-text: #519dbb;
   /** 强调文字背景色 */
-  --color-highlight-bg: #19412F;
+  --color-highlight-bg: #3e4ea8;
+
   /** 按钮文字颜色 */
   --color-btn-text: #3666af;
+  /** 按钮背景色 */
+  --color-btn-bg: #2c2f30;
+  /** 禁止点击背景色 */
+  --color-btn-disabled-bg: #353535;
+  /** 按钮圆角大小 */
+  --btn-radius: 5px;
+  /** 按钮小尺寸圆角大小 */
+  --btn-radius-small: 3px;
+
   /** 滚动条背景色 */
   --color-scrollbar-bg: #2C2F30;
   /** 滚动条滑块颜色 */
   --color-scrollbar-thumb: #515659;
+
   /** Logo文字渐变色 1 */
   --color-logo-text1: #6078ea;
   /** Logo文字渐变色 2 */
@@ -45,18 +56,16 @@ body.dark {
   --color-ai1: #6078ea;
   /** ai头像渐变色2 */
   --color-ai2: #17ead9;
-  /** 聊天背景气泡背景色 */
-  --color-chat-bubble-bg: #232b33;
   /** 头像背景色 */
   --color-avatar-bg: #464E5C;
   /** logo背景色 */
   --color-logo-bg: #6ab7ff;
+
+  /** 聊天背景气泡背景色 */
+  --color-chat-bubble-bg: #232b33;
+
   /** 圆角大小 */
   --radius: 5px;
-  /** 按钮圆角大小 */
-  --btn-radius: 5px;
-  /** 按钮小尺寸圆角大小 */
-  --btn-radius-small: 3px;
 }
 
 @keyframes rotation {
@@ -127,7 +136,7 @@ select,
 textarea,
 input[type="text"],
 input[type="number"] {
-  border-radius: var(--radius-btn);
+  border-radius: var(--btn-radius);
   padding: 5px 10px;
   outline: none;
   color: var(--color-text);
@@ -141,16 +150,13 @@ input[type="text"] {
 button {
   border: none;
   cursor: pointer;
+  color: var(--color-btn-text);
+  user-select: none;
   transition: opacity 0.1s ease;
 }
 
 button:hover {
   opacity: 0.7;
-}
-
-button {
-  color: var(--color-btn-text);
-  user-select: none;
 }
 
 ::-webkit-scrollbar {

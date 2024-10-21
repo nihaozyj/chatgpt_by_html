@@ -1,29 +1,29 @@
 <script>
-	import Header from "./Header.svelte";
-	import Message from "./Message.svelte";
-	import MsgBoxAndBtn from "./MsgBoxAndBtn.svelte";
-	import Historys from "./Historys.svelte";
-	import config from "./config.js";
-	import HelperEdit from "./HelperEdit.svelte";
+	import Header from "./component/Header.svelte";
+	import Message from "./component/Message.svelte";
+	import MsgBoxAndBtn from "./component/MsgBoxAndBtn.svelte";
+	import Historys from "./component/Historys.svelte";
+	import config from "./js/config.js";
+	import Setting from "./component/Setting.svelte";
+	import Agents from "./component/Agents.svelte";
 
 	let leftWidth = config.sidebarWidth;
+	// 弹出层参数
+	let settingIsOpen = false;
+	let agentsIsOpen = true;
 
-	function startDrag(event) {
+	function startDrag() {
 		function doDrag(e) {
 			config.sidebarWidth = leftWidth = e.clientX;
 		}
-
 		function stopDrag() {
 			document.removeEventListener("mousemove", doDrag);
 			document.removeEventListener("mouseup", stopDrag);
 			document.body.style.userSelect = "auto";
 		}
-
 		document.addEventListener("mousemove", doDrag);
 		document.addEventListener("mouseup", stopDrag);
 	}
-
-	let isOpen = true;
 </script>
 
 <main>
@@ -37,7 +37,9 @@
 </main>
 
 <!-- 设置弹窗 -->
-<HelperEdit {isOpen} />
+<Setting isOpen={settingIsOpen} />
+<!-- 智能体列表 -->
+<Agents isOpen={agentsIsOpen} />
 
 <style scoped>
 	main {

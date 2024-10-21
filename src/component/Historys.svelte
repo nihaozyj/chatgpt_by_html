@@ -1,4 +1,5 @@
 <script>
+  import eventMgr from "../js/eventMgr.js";
   export let width;
 
   function btnsSwitch(e) {
@@ -16,8 +17,8 @@
   <header>
     <h1>Mini Helper</h1>
     <div class="btns">
-      <button class="iconfont">&#xe604; 智能体</button>
-      <button class="iconfont">&#xe64b; 设置</button>
+      <button class="iconfont" onclick={() => eventMgr.emit("open-agents")}>&#xe604; 智能体</button>
+      <button class="iconfont" onclick={() => eventMgr.emit("open-setting")}>&#xe64b; 设置</button>
     </div>
   </header>
   <!-- 历史记录列表 -->
@@ -67,11 +68,7 @@
     height: 60px;
     line-height: 60px;
     text-align: center;
-    background: linear-gradient(
-      45deg,
-      var(--color-logo-text1),
-      var(--color-logo-text2)
-    );
+    background: linear-gradient(45deg, var(--color-logo-text1), var(--color-logo-text2));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -149,5 +146,9 @@
   .bottom button:first-child {
     flex-grow: 1;
     margin-right: 10px;
+  }
+
+  .bottom button:last-child {
+    width: 60px;
   }
 </style>
