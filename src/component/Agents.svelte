@@ -1,6 +1,8 @@
 <script>
   import ResizableModal from "./ResizableModal.svelte";
   import HelperEdit from "../component/HelperEdit.svelte";
+  import eMer from "../js/eventMgr.js";
+  import * as Cmc from "../js/conversation.js";
   import config from "../js/config.js";
   import * as Ag from "../js/agent";
   import * as db from "../js/db";
@@ -52,7 +54,20 @@
   }
 
   /** 打开对话 */
-  function handleConversation(_agent) {}
+  async function handleConversation(_agent) {
+    // 创建一个新的对话
+    const conversation = new Cmc.Conversation(_agent);
+    conversation.id = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    conversation.title = _agent.name;
+    // 保存对话到数据库
+    try {
+      db.addData(db.storeNames.conversations, conversation);
+      isOpen = false;
+      eMer.emit(eMer.eventType.CREATE_NEW_DIALOG, conversation);
+    } catch (error) {
+      console.error("数据库保存失败!");
+    }
+  }
 
   /** 删除智能体 */
   async function handleDelete(_agent) {
@@ -71,8 +86,6 @@
     config.defaultAgent = _agent;
     defaultAgent = _agent;
   }
-
-  loadAgents();
 </script>
 
 <ResizableModal {isOpen} width="1" height="1">
@@ -86,18 +99,20 @@
       <!-- 设置内容 -->
       <div class="agent-content">
         <!-- 默认智能体 -->
-        <div class="item default">
-          <div class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(defaultAgent)}>
-            <h2>{defaultAgent.name}</h2>
-            <p>{defaultAgent.setting}</p>
+        {#if defaultAgent}
+          <div class="item default">
+            <div class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(defaultAgent)}>
+              <h2>{defaultAgent.name}</h2>
+              <p>{defaultAgent.setting}</p>
+            </div>
+            <div class="ctrl">
+              <button on:click={() => handleConversation(defaultAgent)}>对话</button>
+              <button on:click={() => handleSetDefault(defaultAgent)}>设为默认</button>
+              <button on:click={() => handleEdit(defaultAgent)}>编辑</button>
+              <button on:click={() => handleDelete(defaultAgent)}>删除</button>
+            </div>
           </div>
-          <div class="ctrl">
-            <button on:click={() => handleConversation(defaultAgent)}>对话</button>
-            <button on:click={() => handleSetDefault(defaultAgent)}>设为默认</button>
-            <button on:click={() => handleEdit(defaultAgent)}>编辑</button>
-            <button on:click={() => handleDelete(defaultAgent)}>删除</button>
-          </div>
-        </div>
+        {/if}
         <!-- 其他智能体 -->
         {#each agents as agent}
           <div class="item">

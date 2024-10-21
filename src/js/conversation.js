@@ -44,6 +44,9 @@ class Conversation {
   /** 会话标题 */
   title = '';
 
+  /** 会话的智能体对象 */
+  agent = null;
+
   /**
    * 会话内容
    * @type {Message[]}
