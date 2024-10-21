@@ -72,27 +72,6 @@
     font-size: 14px;
   }
 
-  .popups-agent select,
-  .popups-agent textarea,
-  .popups-agent input[type="text"] {
-    width: 70%;
-    line-height: 1.5em;
-    caret-color: var(--color-text);
-    border: 1px solid var(--color-border);
-    padding: 0.5em 1em;
-    min-width: 100px;
-  }
-
-  .popups-agent select {
-    outline: none;
-    border-radius: 5px;
-  }
-
-  .popups-agent textarea {
-    resize: none;
-    height: calc(1.5em * 5);
-  }
-
   .popups-agent > .content {
     max-width: 960px;
     margin: 0 auto;

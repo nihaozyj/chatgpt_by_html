@@ -6,11 +6,15 @@
 	import config from "./js/config.js";
 	import Setting from "./component/Setting.svelte";
 	import Agents from "./component/Agents.svelte";
+	import eventMgr from "./js/eventMgr";
+	import { writable } from "svelte/store";
+
+	export const settingIsOpen = writable(false);
+	export const agentsIsOpen = writable(false);
 
 	let leftWidth = config.sidebarWidth;
 	// 弹出层参数
-	let settingIsOpen = false;
-	let agentsIsOpen = true;
+	let { on, eventType: type } = eventMgr;
 
 	function startDrag() {
 		function doDrag(e) {
@@ -24,6 +28,18 @@
 		document.addEventListener("mousemove", doDrag);
 		document.addEventListener("mouseup", stopDrag);
 	}
+
+	$: console.log("设置真实值：", settingIsOpen);
+
+	on(type.OPEN_SETTING_PANEL, function () {
+		console.log("打开设置面板");
+		settingIsOpen.set(true);
+	});
+
+	on(type.OPEN_AGENT_LIST, () => {
+		console.log("打开智能体列表");
+		agentsIsOpen.set(true);
+	});
 </script>
 
 <main>
@@ -37,9 +53,9 @@
 </main>
 
 <!-- 设置弹窗 -->
-<Setting isOpen={settingIsOpen} />
+<Setting bind:isOpen={$settingIsOpen} />
 <!-- 智能体列表 -->
-<Agents isOpen={agentsIsOpen} />
+<Agents bind:isOpen={$agentsIsOpen} />
 
 <style scoped>
 	main {

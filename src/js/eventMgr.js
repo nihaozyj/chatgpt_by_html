@@ -1,35 +1,32 @@
-import { writable } from 'svelte/store';
+const events = {};
 
-const eventBus = writable({});
+function emit(et, data) {
+  if (!events[et]) return;
+  events[et].forEach(callback => callback(data));
+}
 
-const emit = (event, data) => {
-  eventBus.update(events => {
-    events[event] = data;
-    return events;
-  });
-};
-
-const on = (event, callback) => {
-  return eventBus.subscribe(events => {
-    if (events[event]) {
-      callback(events[event]);
-    }
-  });
-};
+function on(et, callback) {
+  if (!et) return;
+  if (!events[et]) {
+    events[et] = [];
+  }
+  events[et].push(callback);
+}
 
 /** 用户事件枚举 */
 const eventType = {
-  /** 打开智能体列表 */
+  /* 打开智能体列表 */
   OPEN_AGENT_LIST: 'openAgentList',
-  /** 打开设置面板 */
+  /* 打开设置面板 */
   OPEN_SETTING_PANEL: 'openSettingPanel',
-  /** 创建一个新的对话 */
+  /* 创建一个新的对话 */
   CREATE_NEW_DIALOG: 'createNewDialog',
-  /** 打开一个对话 */
+  /* 打开一个对话 */
   OPEN_DIALOG: 'openDialog',
-  /** 用户点击发送一条消息 */
+  /* 用户点击发送一条消息 */
   SEND_MESSAGE: 'sendMessage',
 };
+
 
 export default {
   emit, on, eventType

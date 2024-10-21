@@ -1,6 +1,8 @@
 <script>
   import eventMgr from "../js/eventMgr.js";
   export let width;
+  // 事件类型
+  const { eventType: type } = eventMgr;
 
   function btnsSwitch(e) {
     const btns = e.target.querySelector(".btns");
@@ -17,15 +19,15 @@
   <header>
     <h1>Mini Helper</h1>
     <div class="btns">
-      <button class="iconfont" onclick={() => eventMgr.emit("open-agents")}>&#xe604; 智能体</button>
-      <button class="iconfont" onclick={() => eventMgr.emit("open-setting")}>&#xe64b; 设置</button>
+      <button class="iconfont" on:click={() => eventMgr.emit(type.OPEN_AGENT_LIST)}>&#xe604; 智能体</button>
+      <button class="iconfont" on:click={() => eventMgr.emit(type.OPEN_SETTING_PANEL)}>&#xe64b; 设置</button>
     </div>
   </header>
   <!-- 历史记录列表 -->
   <div class="historys">
     {#each new Array(20) as i}
-      <div class="item" data-id="">
-        <h2>
+      <div class="item">
+        <h2 on:click={() => eventMgr.emit(type.OPEN_DIALOG)}>
           <span class="iconfont">&#xe69d;</span>
           HistorysHistorysHistorysHistorysHistorysHistorysHistorysHistorysHistorys
         </h2>
@@ -100,6 +102,7 @@
   }
 
   .item h2 {
+    flex-grow: 1;
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
