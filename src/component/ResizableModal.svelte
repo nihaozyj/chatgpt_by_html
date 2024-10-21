@@ -28,7 +28,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     z-index: 9999;
@@ -39,8 +39,8 @@
     opacity: 0;
     visibility: hidden;
     transition:
-      opacity 0.5s ease,
-      visibility 0.5s ease;
+      opacity 0.3s ease,
+      visibility 0.3s ease;
   }
 
   .open {

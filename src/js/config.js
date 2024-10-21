@@ -5,6 +5,21 @@ class Config {
   sidebarWidth = 300;
   /** 侧栏是否隐藏 */
   sidebarHidden = false;
+
+  /** 字体大小 */
+  fontSize = 16;
+  /** 发送消息按键 */
+  sendMsgKey = 'ctrl+enter';
+  /** 语言 */
+  language = 'zh-CN';
+  /** 是否根据对话生成标题 */
+  isFiniteTitle = true;
+  /** 是否启用快捷指令 */
+  isShortcut = true;
+  /** 是否启用聊天气泡 */
+  isBubble = true;
+  /** 快捷指令列表 */
+  shhortcuts = [];
 }
 
 // 从本地存储加载配置
@@ -34,5 +49,7 @@ const configProxy = new Proxy(config, {
     return true;
   }
 });
+
+console.log(configProxy);
 
 export default configProxy;

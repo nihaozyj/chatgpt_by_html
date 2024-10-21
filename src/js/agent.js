@@ -70,7 +70,7 @@ class Agent {
   /**
    * 接口地址，格式为`http(s)://{接口地址}/v1`,默认为`http://api.openai.com/v1`
    */
-  base_url = "";
+  base_url = "http://api.openai.com/v1";
 
   /**
    * 创建一个智能体实例

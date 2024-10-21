@@ -6,7 +6,18 @@
   let helperIsOpen = false;
   let helperTitle = "修改智能体";
 
-  function handleSave() {}
+  /** 监听窗口的显示和隐藏事件，窗口加载时同时加载智能体列表 */
+  $: if (isOpen) loadAgents();
+
+  function loadAgents() {}
+
+  /** 创建智能体 */
+  function handleCreate() {
+    // helperIsOpen = true;
+    helperTitle = "新建智能体";
+  }
+  /** 编辑智能体 */
+  function handleEdit(id) {}
 </script>
 
 <ResizableModal {isOpen} width="1" height="1">
@@ -15,7 +26,7 @@
       <div class="header">
         <button class="iconfont" on:click={() => (isOpen = false)}>&#xe6ff; 返回</button>
         <h1>我的智能体</h1>
-        <button class="iconfont" on:click={handleSave}>&#xe63e; 新建</button>
+        <button class="iconfont" on:click={handleCreate}>&#xe63e; 新建</button>
       </div>
       <!-- 设置内容 -->
       <div class="agent-content">

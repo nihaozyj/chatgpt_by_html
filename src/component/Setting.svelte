@@ -1,7 +1,86 @@
 <script>
+  import { writable } from "svelte/store";
   import ResizableModal from "./ResizableModal.svelte";
+  import config from "../js/config";
   export let isOpen = false;
   export let title = "基础设置";
+
+  let listIsOpen = writable(false);
+
+  let configCopy = JSON.parse(JSON.stringify(config));
+
+  function convertAndCheckRange(inputString) {
+    // 将字符串转换为数字
+    const number = Number(inputString);
+
+    // 检查转换后的值是否为有效数字且在12到28之间
+    if (!isNaN(number) && number >= 12 && number <= 28) {
+      return number;
+    } else {
+      return false;
+    }
+  }
+
+  function save() {
+    configCopy.fontSize = convertAndCheckRange(configCopy.fontSize);
+    if (!configCopy.fontSize) configCopy.fontSize = config.fontSize;
+    for (let key in configCopy) {
+      if (configCopy[key] !== config[key]) {
+        config[key] = configCopy[key];
+      }
+    }
+    isOpen = false;
+  }
+
+  let listDom;
+
+  let keyList = [];
+
+  $: if (isOpen) init();
+
+  function init() {
+    console.log("xxxxxxxxxxxxxxxxxxx");
+    keyList = config.shhortcuts;
+    configCopy = JSON.parse(JSON.stringify(config));
+  }
+
+  /** 被点击触发 */
+  function mouseDown(e) {
+    const ipt = e.target.parentElement.querySelector("input");
+    ipt.classList.remove("hide");
+    e.target.classList.add("hide");
+    setTimeout(() => {
+      e.target.parentElement.querySelector("input").focus();
+    });
+  }
+
+  /** 失去焦点*/
+  function mouseLeave(e, index) {
+    const p = e.target.parentElement.querySelector("p");
+    keyList[index] = p.textContent = e.target.value;
+    configCopy.shhortcuts = keyList = keyList.filter((str) => str && str.trim() !== "");
+    p.classList.remove("hide");
+    e.target.classList.add("hide");
+  }
+
+  /** 删除元素*/
+  function deleteItem(index) {
+    keyList.splice(index, 1);
+    configCopy.shhortcuts = keyList = keyList;
+  }
+
+  /** 创建一个新的指令 */
+  function createItem() {
+    keyList.unshift("");
+    keyList = keyList;
+    setTimeout(() => {
+      const p = listDom.querySelector(".instruct:first-child p");
+      const input = listDom.querySelector(".instruct:first-child input");
+      p.classList.add("hide");
+      input.classList.remove("hide");
+      input.focus();
+    });
+  }
 </script>
 
 <ResizableModal {isOpen} width={1} height={1}>
@@ -11,24 +90,24 @@
         <div class="header">
           <button on:click={() => (isOpen = false)} class="iconfont">&#xe6ff; 返回</button>
           <h1>{title}</h1>
-          <button class="iconfont">&#xe62b; 保存</button>
+          <button class="iconfont" on:click={save}>&#xe62b; 保存</button>
         </div>
         <!-- 设置内容 -->
         <div class="setting-content">
           <div class="item">
             <span>字体大小</span>
-            <input type="text" placeholder="字体大小默认为16px" />
+            <input type="text" placeholder="字体大小默认为16px" bind:value={configCopy.fontSize} />
           </div>
           <div class="item">
             <span>主题</span>
-            <select name="" id="">
+            <select name="" bind:value={configCopy.theme}>
               <option value="dark">暗色模式</option>
               <option value="light">亮色模式</option>
             </select>
           </div>
           <div class="item">
             <span>发送键(发送键之外的按键换行)</span>
-            <select name="" id="">
+            <select bind:value={configCopy.sendMsgKey}>
               <option value="enter">enter</option>
               <option value="ctrl+enter">ctrl+enter</option>
               <option value="shift+enter">shift+enter</option>
@@ -38,25 +117,25 @@
           </div>
           <div class="item">
             <span>语言</span>
-            <select name="" id="">
-              <option value="zh-CN">简体中文</option>
+            <select bind:value={configCopy.language}>
+              <option value="zh-CN" selected>简体中文</option>
             </select>
           </div>
           <div class="item">
             <label for="auto-title">根据对话生成合适的标题</label>
-            <input type="checkbox" id="auto-title" />
+            <input type="checkbox" id="auto-title" bind:checked={configCopy.isFiniteTitle} />
           </div>
           <div class="item">
             <label for="auto-title1">聊天气泡</label>
-            <input type="checkbox" id="auto-title1" />
+            <input type="checkbox" id="auto-title1" bind:checked={configCopy.isBubble} />
           </div>
           <div class="item">
             <label for="auto-title2">启用快捷命令</label>
-            <input type="checkbox" id="auto-title2" />
+            <input type="checkbox" id="auto-title2" bind:checked={configCopy.isShortcut} />
           </div>
           <div class="item">
             <label for="auto-title2">管理快捷指令</label>
-            <button>编辑/查看快捷命令</button>
+            <button on:click={() => listIsOpen.set(true)}>编辑/查看快捷命令</button>
           </div>
           <div class="item">
             <label for="auto-title2">重置所有设置</label>
@@ -72,7 +151,108 @@
   </div>
 </ResizableModal>
 
+<!-- 指令列表编辑 -->
+<ResizableModal bind:isOpen={$listIsOpen} width={660} height={520}>
+  <div class="content">
+    <div class="header">
+      <button class="iconfont" on:click={() => listIsOpen.set(false)}>&#xe6ff; 返回</button>
+      <h1>编辑/查看快捷命令</h1>
+      <button class="iconfont" on:click={createItem}>&#xe69b; 新建</button>
+    </div>
+    <div class="list" bind:this={listDom}>
+      {#each keyList as key, index}
+        <div class="instruct">
+          <div class="text">
+            <p on:click={mouseDown}>{key}</p>
+            <input on:blur={() => mouseLeave(event, index)} class="hide" type="text" value={key} placeholder="请输入指令内容" />
+          </div>
+          <button on:click={() => deleteItem(index)} class="iconfont">&#xe657;</button>
+        </div>
+      {/each}
+      {#if keyList.length === 0}
+        <span>暂无快捷指令, 请点击新建按钮添加</span>
+      {/if}
+    </div>
+  </div>
+</ResizableModal>
+
 <style>
+  .content {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-bg);
+  }
+
+  .content .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 0 10px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .list {
+    width: 100%;
+    height: 440px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .list > span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 160px;
+    color: var(--color-secondary-text);
+  }
+
+  .instruct {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+  }
+
+  .instruct .text {
+    width: 0;
+    flex-grow: 1;
+    position: relative;
+  }
+
+  .instruct button {
+    color: var(--color-warn-text);
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+
+  .text * {
+    left: 10px;
+    position: absolute;
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.5em;
+    padding: 5px;
+  }
+
+  .text input {
+    border: 1px solid var(--color-border);
+  }
+
+  .text p {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hide {
+    display: none;
+  }
+
   .popups-setting {
     position: absolute;
     width: 100%;
@@ -87,15 +267,6 @@
     background-color: var(--color-bg);
     color: var(--color-text);
     font-size: 14px;
-  }
-
-  .popups-setting input[type="checkbox"] {
-    padding: 5px !important;
-    font-size: 2em !important;
-    width: 20px !important;
-    display: block !important;
-    border: 1px solid red !important;
-    background-color: red !important;
   }
 
   .popups-setting select,

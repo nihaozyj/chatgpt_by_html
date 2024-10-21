@@ -13,6 +13,14 @@ function on(et, callback) {
   events[et].push(callback);
 }
 
+function off(et, callback) {
+  if (!events[et]) return;
+  const index = events[et].indexOf(callback);
+  if (index > -1) {
+    events[et].splice(index, 1);
+  }
+}
+
 /** 用户事件枚举 */
 const eventType = {
   /* 打开智能体列表 */

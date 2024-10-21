@@ -1,7 +1,96 @@
 <script>
+  import { createEventDispatcher } from "svelte";
   import ResizableModal from "./ResizableModal.svelte";
+  import * as db from "../js/db.js";
+  import * as Ag from "../js/agent.js";
+
   export let isOpen = false;
   export let title = "修改智能体";
+  export let id = "";
+
+  const dispatch = createEventDispatcher();
+
+  /** 智能体数据 */
+  let agent;
+
+  $: if (isOpen) {
+    init();
+  } else {
+    agent = null;
+  }
+
+  async function init() {
+    if (id) {
+      agent = Ag.Agent.createAgent();
+    } else {
+      try {
+        agent = awaitdb.getData(db.storeNames.agents, id);
+      } catch (error) {
+        dispatch("error", { msg: "智能体获取失败，可能是编号有误，请刷新页面后尝试！", error });
+        isOpen = false;
+      }
+    }
+    agent.custom_model_list = agent.custom_model_list.join(",");
+  }
+
+  async function save() {
+    const _agent = Ag.Agent.createAgent();
+    // 校验智能体名称
+    if (!agent.name) {
+      agent.name = _agent.name;
+    }
+    // 校验智能体设定
+    if (!agent.setting) {
+      agent.setting = _agent.setting;
+    }
+    // 校验对话模型
+    if (!Ag.modelList.includes(agent.model) && !agent.custom_model_list.includes(agent.model)) {
+      agent.model = Ag.modelList[0]; // 默认选择第一个模型
+    }
+    // 校验请求地址
+    if (!agent.base_url) {
+      agent.base_url = _agent.base_url;
+    }
+    // 校验请求密钥
+    if (!agent.api_key) {
+      dispatch("error", { msg: "请求密钥（api_key）为必填项！" });
+      return; // 终止保存
+    }
+    // 校验自定义模型
+    if (agent.custom_model_list) {
+      agent.custom_model_list = agent.custom_model_list.split(",").map((model) => model.trim());
+    } else {
+      agent.custom_model_list = []; // 默认值为空数组
+    }
+    // 校验采样温度(将输入值转换为数字)
+    agent.temperature = Number(agent.temperature);
+    if (isNaN(agent.temperature) || agent.temperature < 0 || agent.temperature > 2) {
+      agent.temperature = 1; // 默认值
+    }
+    // 校验核心采样(将输入值转换为数字)
+    agent.top_p = Number(agent.top_p);
+    if (isNaN(agent.top_p) || agent.top_p < 0 || agent.top_p > 1) {
+      agent.top_p = 1; // 默认值
+    }
+    // 校验频率惩罚(将输入值转换为数字)
+    agent.frequency_penalty = Number(agent.frequency_penalty);
+    if (isNaN(agent.frequency_penalty) || agent.frequency_penalty < -2 || agent.frequency_penalty > 2) {
+      agent.frequency_penalty = 0; // 默认值
+    }
+    // 校验附带历史消息数(将输入值转换为数字)
+    agent.lst_message_num = Number(agent.lst_message_num);
+    if (isNaN(agent.lst_message_num) || agent.lst_message_num < 0) {
+      agent.lst_message_num = 2; // 默认值
+    }
+    // 在这里可以添加保存逻辑，例如将 agent 保存到数据库
+    try {
+      await db.saveData(db.storeNames.agents, agent);
+      dispatch("success", { msg: "智能体保存成功！" });
+      isOpen = false; // 关闭弹窗
+    } catch (error) {
+      dispatch("error", { msg: "智能体保存失败！", error });
+    }
+  }
 </script>
 
 <ResizableModal {isOpen} width={1} height={1}>
@@ -11,54 +100,56 @@
         <div class="header">
           <button on:click={() => (isOpen = false)} class="iconfont">&#xe6ff; 返回</button>
           <h1>{title}</h1>
-          <button class="iconfont">&#xe62b; 保存</button>
+          <button class="iconfont" on:click={save}>&#xe62b; 保存</button>
         </div>
         <!-- 设置内容 -->
         <div class="setting-content">
-          <div class="item">
-            <span>智能体名称</span>
-            <input type="text" placeholder="请输入智能体名称" />
-          </div>
-          <div class="item">
-            <span>智能体设定</span>
-            <textarea name="" id="" placeholder="请输入智能体设定"></textarea>
-          </div>
-          <div class="item">
-            <span>对话模型</span>
-            <select name="" id="">
-              <option value="">请选择对话模型</option>
-              <option value="">小冰</option>
-              <option value="">小冰V2</option>
-            </select>
-          </div>
-          <div class="item">
-            <span>请求地址(baseurl)</span>
-            <input type="text" placeholder="默认为:https://api.openai-up.com/v1" />
-          </div>
-          <div class="item">
-            <span>请求密钥(apikey)</span>
-            <input type="text" placeholder="密钥，必填！" />
-          </div>
-          <div class="item">
-            <span>自定义模型</span>
-            <input type="text" placeholder="例: gpt4,o1-mini" />
-          </div>
-          <div class="item">
-            <span>采样温度(temperature)</span>
-            <input type="text" placeholder="取值 [0,2]，默认为1" />
-          </div>
-          <div class="item">
-            <span>核心采样(top_p)</span>
-            <input type="text" placeholder="取值 [0,1]，默认为1" />
-          </div>
-          <div class="item">
-            <span>频率惩罚(frequency_penalty)</span>
-            <input type="text" placeholder="取值 [-2,2]，默认为0" />
-          </div>
-          <div class="item">
-            <span>附带历史消息数</span>
-            <input type="text" placeholder="表示携带的上下文轮次，一轮对话包含两条消息" />
-          </div>
+          {#if agent}
+            <div class="item">
+              <span>智能体名称</span>
+              <input bind:value={agent.name} type="text" placeholder="请输入智能体名称" />
+            </div>
+            <div class="item">
+              <span>智能体设定</span>
+              <textarea bind:value={agent.setting} name="" id="" placeholder="请输入智能体设定"></textarea>
+            </div>
+            <div class="item">
+              <span>对话模型</span>
+              <select bind:value={agent.model}>
+                {#each [...Ag.modelList, ...agent.custom_model_list] as model}
+                  <option value={model}>{model}</option>
+                {/each}
+              </select>
+            </div>
+            <div class="item">
+              <span>请求地址(baseurl)</span>
+              <input bind:value={agent.base_url} type="text" placeholder="默认为:https://api.openai-up.com/v1" />
+            </div>
+            <div class="item">
+              <span>请求密钥(apikey)</span>
+              <input bind:value={agent.api_key} type="text" placeholder="密钥，必填！" />
+            </div>
+            <div class="item">
+              <span>自定义模型</span>
+              <input bind:value={agent.custom_model_list} type="text" placeholder="例: gpt4,o1-mini" />
+            </div>
+            <div class="item">
+              <span>采样温度(temperature)</span>
+              <input bind:value={agent.temperature} type="text" placeholder="取值 [0,2]，默认为1" />
+            </div>
+            <div class="item">
+              <span>核心采样(top_p)</span>
+              <input bind:value={agent.top_p} type="text" placeholder="取值 [0,1]，默认为1" />
+            </div>
+            <div class="item">
+              <span>频率惩罚(frequency_penalty)</span>
+              <input bind:value={agent.frequency_penalty} type="text" placeholder="取值 [-2,2]，默认为0" />
+            </div>
+            <div class="item">
+              <span>附带历史消息数</span>
+              <input bind:value={agent.lst_message_num} type="text" placeholder="表示携带的上下文轮次，一轮对话包含两条消息" />
+            </div>
+          {/if}
         </div>
       </form>
     </div>

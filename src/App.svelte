@@ -7,10 +7,11 @@
 	import Setting from "./component/Setting.svelte";
 	import Agents from "./component/Agents.svelte";
 	import eventMgr from "./js/eventMgr";
+	import ResizableModal from "./js/ResizableModal.js";
 	import { writable } from "svelte/store";
 
 	export const settingIsOpen = writable(false);
-	export const agentsIsOpen = writable(false);
+	export const agentsIsOpen = writable(true);
 
 	let leftWidth = config.sidebarWidth;
 	// 弹出层参数
@@ -32,12 +33,10 @@
 	$: console.log("设置真实值：", settingIsOpen);
 
 	on(type.OPEN_SETTING_PANEL, function () {
-		console.log("打开设置面板");
 		settingIsOpen.set(true);
 	});
 
 	on(type.OPEN_AGENT_LIST, () => {
-		console.log("打开智能体列表");
 		agentsIsOpen.set(true);
 	});
 </script>
@@ -56,6 +55,9 @@
 <Setting bind:isOpen={$settingIsOpen} />
 <!-- 智能体列表 -->
 <Agents bind:isOpen={$agentsIsOpen} />
+
+<!-- 消息框 -->
+<!-- <ResizableModal width={300} height={300} title="消息框" isOpen={true}></ResizableModal> -->
 
 <style scoped>
 	main {

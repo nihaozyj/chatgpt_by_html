@@ -68,6 +68,62 @@ body.dark {
   --radius: 5px;
 }
 
+body.light {
+  /** 背景色 */
+  --color-bg: #f5f5f5;
+  /** 边框颜色 */
+  --color-border: #dcdcdc;
+  /** 文字颜色 */
+  --color-text: #333333;
+  /** 次要内容的文字颜色 */
+  --color-secondary-text: #2f6b5f;
+  /** 警告文字颜色 */
+  --color-warn-text: #a72126;
+  /** 强调文字颜色 */
+  --color-highlight-text: #2a6f8c;
+  /** 强调文字背景色 */
+  --color-highlight-bg: #d0e1ff;
+
+  /** 按钮文字颜色 */
+  --color-btn-text: #2a5b8c;
+  /** 按钮背景色 */
+  --color-btn-bg: #e0e0e0;
+  /** 禁止点击背景色 */
+  --color-btn-disabled-bg: #dcdcdc;
+  /** 按钮圆角大小 */
+  --btn-radius: 5px;
+  /** 按钮小尺寸圆角大小 */
+  --btn-radius-small: 3px;
+
+  /** 滚动条背景色 */
+  --color-scrollbar-bg: #e0e0e0;
+  /** 滚动条滑块颜色 */
+  --color-scrollbar-thumb: #b0b0b0;
+
+  /** Logo文字渐变色 1 */
+  --color-logo-text1: #6078ea;
+  /** Logo文字渐变色 2 */
+  --color-logo-text2: #17ead9;
+  /** 玩家头像渐变色1 */
+  --color-avatar1: #6078ea;
+  /** 玩家头像渐变色2 */
+  --color-avatar2: #17ead9;
+  /** ai头像渐变色1 */
+  --color-ai1: #6078ea;
+  /** ai头像渐变色2 */
+  --color-ai2: #17ead9;
+  /** 头像背景色 */
+  --color-avatar-bg: #d0d7e5;
+  /** logo背景色 */
+  --color-logo-bg: #b0d4ff;
+
+  /** 聊天背景气泡背景色 */
+  --color-chat-bubble-bg: #e8f0f8;
+
+  /** 圆角大小 */
+  --radius: 5px;
+}
+
 @keyframes rotation {
   from {
     transform: rotate(0deg);
