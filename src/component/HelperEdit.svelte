@@ -6,34 +6,19 @@
 
   export let isOpen = false;
   export let title = "修改智能体";
-  export let id = "";
+  export let agent;
 
   const dispatch = createEventDispatcher();
 
-  /** 智能体数据 */
-  let agent;
-
   $: if (isOpen) {
-    init();
-  } else {
-    agent = null;
-  }
-
-  async function init() {
-    if (id) {
-      agent = Ag.Agent.createAgent();
-    } else {
-      try {
-        agent = awaitdb.getData(db.storeNames.agents, id);
-      } catch (error) {
-        dispatch("error", { msg: "智能体获取失败，可能是编号有误，请刷新页面后尝试！", error });
-        isOpen = false;
-      }
+    if (typeof agent.custom_model_list === "Array") {
+      agent.custom_model_list = agent.custom_model_list.join(",");
     }
-    agent.custom_model_list = agent.custom_model_list.join(",");
+  } else {
+    dispatch("close");
   }
 
-  async function save() {
+  function save() {
     const _agent = Ag.Agent.createAgent();
     // 校验智能体名称
     if (!agent.name) {
@@ -54,10 +39,10 @@
     // 校验请求密钥
     if (!agent.api_key) {
       dispatch("error", { msg: "请求密钥（api_key）为必填项！" });
-      return; // 终止保存
     }
     // 校验自定义模型
-    if (agent.custom_model_list) {
+    if (typeof agent.custom_model_list === "string") {
+      console.log(agent.custom_model_list);
       agent.custom_model_list = agent.custom_model_list.split(",").map((model) => model.trim());
     } else {
       agent.custom_model_list = []; // 默认值为空数组
@@ -82,13 +67,11 @@
     if (isNaN(agent.lst_message_num) || agent.lst_message_num < 0) {
       agent.lst_message_num = 2; // 默认值
     }
-    // 在这里可以添加保存逻辑，例如将 agent 保存到数据库
     try {
-      await db.saveData(db.storeNames.agents, agent);
-      dispatch("success", { msg: "智能体保存成功！" });
-      isOpen = false; // 关闭弹窗
-    } catch (error) {
-      dispatch("error", { msg: "智能体保存失败！", error });
+      db.updateData(db.storeNames.agents, agent);
+      isOpen = false;
+    } catch (e) {
+      console.error("数据存储失败！", e);
     }
   }
 </script>

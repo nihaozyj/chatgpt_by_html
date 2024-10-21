@@ -20,6 +20,8 @@ class Config {
   isBubble = true;
   /** 快捷指令列表 */
   shhortcuts = [];
+  /** 默认智能体 */
+  defaultAgent = null;
 }
 
 // 从本地存储加载配置
@@ -49,7 +51,5 @@ const configProxy = new Proxy(config, {
     return true;
   }
 });
-
-console.log(configProxy);
 
 export default configProxy;

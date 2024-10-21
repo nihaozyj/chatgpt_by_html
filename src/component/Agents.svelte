@@ -1,23 +1,78 @@
 <script>
   import ResizableModal from "./ResizableModal.svelte";
   import HelperEdit from "../component/HelperEdit.svelte";
+  import config from "../js/config.js";
+  import * as Ag from "../js/agent";
+  import * as db from "../js/db";
   export let isOpen = false;
 
   let helperIsOpen = false;
   let helperTitle = "修改智能体";
+  let agents = [];
+  let agent = null;
+
+  let defaultAgent = null;
 
   /** 监听窗口的显示和隐藏事件，窗口加载时同时加载智能体列表 */
   $: if (isOpen) loadAgents();
 
-  function loadAgents() {}
+  async function loadAgents() {
+    defaultAgent = config.defaultAgent;
+    if (!defaultAgent) {
+      defaultAgent = Ag.Agent.createAgent();
+    }
+    try {
+      agents = await db.getAllData(db.storeNames.agents);
+    } catch (error) {
+      console.error("数据库查询失败!");
+      agents = [];
+    }
+    /** 更新默认智能体 */
+    const na = agents.find((a) => a.id === defaultAgent.id);
+    if (na) {
+      defaultAgent = na;
+      config.defaultAgent = na;
+    }
+    // 用于数据库中是尾插法，此处反转数组，先创建的在前面
+    agents = agents.reverse();
+  }
 
   /** 创建智能体 */
   function handleCreate() {
     // helperIsOpen = true;
     helperTitle = "新建智能体";
+    agent = Ag.Agent.createAgent();
+    helperIsOpen = true;
   }
   /** 编辑智能体 */
-  function handleEdit(id) {}
+  function handleEdit(_agent) {
+    helperTitle = "修改智能体";
+    agent = JSON.parse(JSON.stringify(_agent));
+    helperIsOpen = true;
+  }
+
+  /** 打开对话 */
+  function handleConversation(_agent) {}
+
+  /** 删除智能体 */
+  async function handleDelete(_agent) {
+    try {
+      const ag = agents.find((a) => a.id === _agent.id);
+      if (ag) agents.splice(agents.indexOf(ag), 1);
+      await db.deleteData(db.storeNames.agents, _agent.id);
+      agents = agents;
+    } catch (error) {
+      console.error("数据库删除失败!");
+    }
+  }
+
+  /** 设为默认智能体 */
+  function handleSetDefault(_agent) {
+    config.defaultAgent = _agent;
+    defaultAgent = _agent;
+  }
+
+  loadAgents();
 </script>
 
 <ResizableModal {isOpen} width="1" height="1">
@@ -30,29 +85,31 @@
       </div>
       <!-- 设置内容 -->
       <div class="agent-content">
+        <!-- 默认智能体 -->
         <div class="item default">
-          <div class="agent-info" title="点击智能体名称或者描述开始对话">
-            <h2>智能体名称</h2>
-            <p>很棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智能体，啊棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智 dasd</p>
+          <div class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(defaultAgent)}>
+            <h2>{defaultAgent.name}</h2>
+            <p>{defaultAgent.setting}</p>
           </div>
           <div class="ctrl">
-            <button>对话</button>
-            <button>设为默认</button>
-            <button>编辑</button>
-            <button>删除</button>
+            <button on:click={() => handleConversation(defaultAgent)}>对话</button>
+            <button on:click={() => handleSetDefault(defaultAgent)}>设为默认</button>
+            <button on:click={() => handleEdit(defaultAgent)}>编辑</button>
+            <button on:click={() => handleDelete(defaultAgent)}>删除</button>
           </div>
         </div>
-        {#each new Array(10) as a, i}
+        <!-- 其他智能体 -->
+        {#each agents as agent}
           <div class="item">
-            <div class="agent-info">
-              <h2>智能体名称</h2>
-              <p>很棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智能体，啊棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智能体，啊哈哈很棒的智 dasd</p>
+            <div class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(agent)}>
+              <h2>{agent.name}</h2>
+              <p>{agent.setting}</p>
             </div>
             <div class="ctrl">
-              <button>对话</button>
-              <button>设为默认</button>
-              <button>编辑</button>
-              <button>删除</button>
+              <button on:click={() => handleConversation(agent)}>对话</button>
+              <button on:click={() => handleSetDefault(agent)}>设为默认</button>
+              <button on:click={() => handleEdit(agent)}>编辑</button>
+              <button on:click={() => handleDelete(agent)}>删除</button>
             </div>
           </div>
         {/each}
@@ -62,7 +119,7 @@
 </ResizableModal>
 
 <!-- 智能体编辑弹窗 -->
-<HelperEdit isOpen={helperIsOpen} title={helperTitle} />
+<HelperEdit on:close={loadAgents} bind:isOpen={helperIsOpen} title={helperTitle} bind:agent />
 
 <style>
   .popups-agent {

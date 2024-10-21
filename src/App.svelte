@@ -7,11 +7,11 @@
 	import Setting from "./component/Setting.svelte";
 	import Agents from "./component/Agents.svelte";
 	import eventMgr from "./js/eventMgr";
-	import ResizableModal from "./js/ResizableModal.js";
+	// import ResizableModal from "./js/ResizableModal.js";
 	import { writable } from "svelte/store";
 
 	export const settingIsOpen = writable(false);
-	export const agentsIsOpen = writable(true);
+	export const agentsIsOpen = writable(false);
 
 	let leftWidth = config.sidebarWidth;
 	// 弹出层参数
@@ -29,8 +29,6 @@
 		document.addEventListener("mousemove", doDrag);
 		document.addEventListener("mouseup", stopDrag);
 	}
-
-	$: console.log("设置真实值：", settingIsOpen);
 
 	on(type.OPEN_SETTING_PANEL, function () {
 		settingIsOpen.set(true);
