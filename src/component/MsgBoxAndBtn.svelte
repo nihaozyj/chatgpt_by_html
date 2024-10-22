@@ -40,13 +40,19 @@
   /** 插入文件或者图片*/
   function insertFile() {}
   /** 清除历史记录上下文 */
-  function clearHistory() {}
+  function clearHistory() {
+    eventMgr.emit(eventMgr.eventType.CLEAR_DIALOG_HISTORY);
+  }
   /** 修改当前使用的对话模型 */
-  function changeModel() {}
+  function changeModel() {
+    eventMgr.emit(eventMgr.eventType.MODIFY_DIALOG_MODEL);
+  }
   /** 查看键盘快捷键 */
   function showShortcuts() {}
   /** 修改当前配置文件 */
-  function changeConfig() {}
+  function changeConfig() {
+    eventMgr.emit(eventMgr.eventType.MODIFY_DIALOG_CONFIG);
+  }
 
   function handleKeyDown(event) {
     // 检查是否按下发送快捷键

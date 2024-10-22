@@ -8,14 +8,22 @@
   export let title = "修改智能体";
   export let agent;
 
+  // 为true时，表示不进行提交，点击保存后，通过事件返回修改后的智能体数据
+  export let isSave = false;
+
   const dispatch = createEventDispatcher();
 
   $: if (isOpen) {
-    if (typeof agent.custom_model_list === "Array") {
+    if (!agent && isSave) isOpen = false;
+    else if (typeof agent.custom_model_list === "Array") {
       agent.custom_model_list = agent.custom_model_list.join(",");
     }
   } else {
-    dispatch("close");
+    if (agent && typeof agent === "object") {
+      dispatch("close", JSON.parse(JSON.stringify(agent)));
+    } else {
+      dispatch("close", null);
+    }
   }
 
   function save() {
@@ -38,7 +46,7 @@
     }
     // 校验请求密钥
     if (!agent.api_key) {
-      dispatch("error", { msg: "请求密钥（api_key）为必填项！" });
+      console.error("请填写请求密钥！");
     }
     // 校验自定义模型
     if (typeof agent.custom_model_list === "string") {
@@ -67,12 +75,22 @@
     if (isNaN(agent.lst_message_num) || agent.lst_message_num < 0) {
       agent.lst_message_num = 2; // 默认值
     }
-    try {
-      db.updateData(db.storeNames.agents, agent);
+
+    if (!isSave) {
+      try {
+        db.updateData(db.storeNames.agents, agent);
+        isOpen = false;
+      } catch (e) {
+        console.error("数据存储失败！", e);
+      }
+    } else {
       isOpen = false;
-    } catch (e) {
-      console.error("数据存储失败！", e);
     }
+  }
+
+  function calcel() {
+    agent = null;
+    isOpen = false;
   }
 </script>
 
@@ -81,7 +99,7 @@
     <div class="content">
       <form id="setting-form" action="javascript:void(0);">
         <div class="header">
-          <button on:click={() => (isOpen = false)} class="iconfont">&#xe6ff; 返回</button>
+          <button on:click={calcel} class="iconfont">&#xe6ff; 返回</button>
           <h1>{title}</h1>
           <button class="iconfont" on:click={save}>&#xe62b; 保存</button>
         </div>

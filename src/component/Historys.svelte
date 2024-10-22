@@ -1,12 +1,18 @@
 <script>
   import eventMgr from "../js/eventMgr.js";
   import utils from "../js/utils.js";
+  import HelperEdit from "./HelperEdit.svelte";
   import * as db from "../js/db.js";
   import { onMount } from "svelte";
+  import { modelList } from "../js/agent.js";
+  import { writable } from "svelte/store";
   export let width;
 
   let conversations = [];
   let nowConvasationId = 0;
+  let nowAgent = null;
+
+  const isOpen = writable(false);
 
   // 读取数据库超时时间
   const readTimeout = 1000 * 3;
@@ -103,6 +109,44 @@
       }
     });
   }
+
+  eventMgr.on(type.MODIFY_DIALOG_MODEL, async () => {
+    const con = conversations.find((item) => item.id === nowConvasationId);
+    const ag = con.agent;
+    const models = [...modelList, ...ag.custom_model_list];
+    const selects = models.map((item) => ({ value: item, label: item }));
+    utils.openSelectDialog("模型选择", selects, ag.model).then(async (model) => {
+      if (!model) return;
+      try {
+        con.agent.model = model;
+        await db.updateData(db.storeNames.conversations, con);
+        eventMgr.emit(type.DIALOG_UPDATE, con);
+      } catch (error) {
+        console.error("更新数据库失败");
+      }
+    });
+  });
+
+  eventMgr.on(type.MODIFY_DIALOG_CONFIG, async () => {
+    const con = conversations.find((item) => item.id === nowConvasationId);
+    if (!con) return console.error("当前对话不存在");
+    nowAgent = con.agent;
+    isOpen.set(true);
+  });
+
+  async function handleClear(event) {
+    if (!event.detail) return;
+    const con = conversations.find((item) => item.id === nowConvasationId);
+    if (!con) return console.error("当前对话不存在");
+    con.agent = event.detail;
+    console.log(`我执行呢`, event.detail);
+    try {
+      await db.updateData(db.storeNames.conversations, con);
+      eventMgr.emit(type.DIALOG_UPDATE, con);
+    } catch (error) {
+      console.error("更新数据库失败");
+    }
+  }
 </script>
 
 <main style="width: {width}px;">
@@ -138,6 +182,7 @@
     <button class="iconfont">&#xe69b; 新对话</button>
     <button class="iconfont" title="清空所有历史记录">&#xe608;</button>
   </div>
+  <HelperEdit bind:isOpen={$isOpen} title="修改当前对话的智能体配置" on:close={handleClear} bind:agent={nowAgent} isSave={true} />
 </main>
 
 <style>

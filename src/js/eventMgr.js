@@ -37,6 +37,14 @@ const eventType = {
   UPDATE_SETTING: 'updateSetting',
   /** 请求创建一个新的对话 */
   REQUEST_CREATE_NEW_DIALOG: 'requestCreateNewDialog',
+  /** 修改当前对话配置文件 */
+  MODIFY_DIALOG_CONFIG: 'modifyDialogConfig',
+  /** 修改当前对话模型 */
+  MODIFY_DIALOG_MODEL: 'modifyDialogModel',
+  /** 清除对话历史记录 */
+  CLEAR_DIALOG_HISTORY: 'clearDialogHistory',
+  /** 对话更新 */
+  DIALOG_UPDATE: 'dialogUpdate',
 };
 
 

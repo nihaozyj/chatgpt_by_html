@@ -32,20 +32,22 @@ async function openInputDialog(title, message) {
  * 打开一个弹窗，下拉框进行选择，并返回选中的内容
  * @param {string} title 弹窗标题
  * @param {Array<{value: string, label: string}>} selects 用户选择列表
+ * @param {string} value 默认值
  * @returns {string | null} 用户输入的内容
  */
-function openSelectDialog(title, selects) {
+function openSelectDialog(title, selects, value) {
   const id = `modal-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-  const selectsStr = selects.map(item => `<option value="${item.value}">${item.label}</option>`).join('');
-  const template = `<div class="modal" id="${id}"> <div class="modal-content select"> <div class="header"> <button data-tyle="cancel">取消</button> <h2>${title}</h2> <button data-tyle="enter">确认</button> </div> <select>${selectsStr}</select> </div> </div>`;
+  const selectsStr = selects.map(item => `<option value="${item.value}" ${item.value === value ? 'selected' : ''}>${item.label}</option>`).join('');
+  const template = `<div class="modal" id="${id}"> <div class="modal-content select"> <div class="header"> <button data-tyle="cancel">取消</button> <h2>${title}</h2> <button data-tyle="enter">确认</button> </div> <select value="${value}">${selectsStr}</select> </div> </div>`;
+
+  document.body.insertAdjacentHTML('beforeend', template);
 
   return new Promise(resolve => {
     const modal = document.querySelector(`#${id}`);
+    console.log('modal:', modal);
     const select = modal.querySelector('select');
     const cancelBtn = modal.querySelector('[data-tyle="cancel"]');
     const enterBtn = modal.querySelector('[data-tyle="enter"]');
-
-    document.body.insertAdjacentHTML('beforeend', template);
 
     cancelBtn.addEventListener('click', () => {
       modal.remove();

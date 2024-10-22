@@ -14,6 +14,7 @@
 	export const agentsIsOpen = writable(false);
 
 	let leftWidth = config.sidebarWidth;
+
 	// 弹出层参数
 	let { on, eventType: type } = eventMgr;
 
