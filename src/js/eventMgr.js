@@ -33,6 +33,8 @@ const eventType = {
   OPEN_DIALOG: 'openDialog',
   /** 用户点击发送一条消息 */
   SEND_MESSAGE: 'sendMessage',
+  /** 设置更新 */
+  UPDATE_SETTING: 'updateSetting',
 };
 
 

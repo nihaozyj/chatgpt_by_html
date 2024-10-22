@@ -63,6 +63,8 @@ body.dark {
 
   /** 聊天背景气泡背景色 */
   --color-chat-bubble-bg: #232b33;
+  /** 助理和用户头像颜色 */
+  --color-assistant-avatar: #2f7e3a;
 
   /** 圆角大小 */
   --radius: 5px;

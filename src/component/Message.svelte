@@ -1,18 +1,62 @@
-<script>
+<script context="module">
+  import eventMgr from "../js/eventMgr";
+  import { roleType } from "../js/agent";
+  import { writable } from "svelte/store";
+  import * as Con from "../js/conversation";
+
+  /** 当前消息状态，为真说明消息发送中，禁止再次发送消息，为假说明可以发送消息 */
+  export const sending = writable(false);
+
+  /**
+   * 当前对话
+   * @type {Con.Conversational}
+   */
+  let nowConversational = null;
+
+  /**
+   * 消息列表
+   * @type {Con.Message[]}
+   */
+  let msgs = [new Con.Message(roleType.assistant, "你好，我是小助手，很高兴为您服务。", 0)];
+
+  console.log(msgs);
+
+  function mdToHtml(md) {
+    return md;
+  }
+
+  eventMgr.on(eventMgr.eventType.SEND_MESSAGE, (msg) => {
+    sending.set(true);
+  });
+  eventMgr.on(eventMgr.eventType.CREATE_NEW_DIALOG, (conversational) => {});
+  eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {});
+
+  /** 复制 */
+  function copy() {}
+
+  /** 朗读 */
+  function read() {}
+
+  /** 修改 */
+  function modify() {}
+
+  /** 删除 */
+  function deleteMsg() {}
+
+  /** 重新回答 */
+  function reAnswer() {}
 </script>
 
 <main>
-  {#each new Array(10) as a, i}
+  {#each msgs as item, index}
     <div class="item">
-      <div class={`${i % 2 == 0 ? "right" : "left"} photo`}>
+      <div class={`${item.role === roleType.assistant ? "left" : "right"} photo`}>
         <span class="iconfont">
-          {@html i % 2 == 0 ? "&#xe761;" : "&#xe6aa;"}
+          {@html item.role !== roleType.assistant ? "&#xe761;" : "&#xe6aa;"}
         </span>
       </div>
-      <div class="content">
-        <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-      </div>
-      <div class={`${i % 2 == 0 ? "right" : "left"} btns`}>
+      <div class="content">{mdToHtml(item.message)}</div>
+      <div class={`${item.role === roleType.assistant ? "left" : "right"} btns`} data-index={index}>
         <button class="iconfont" title="复制">&#xe60f; 复制</button>
         <button class="iconfont" title="朗读">&#xe6ce; 朗读</button>
         <button class="iconfont" title="修改">&#xe60e; 修改</button>
@@ -48,6 +92,7 @@
 
   .photo {
     position: absolute;
+    color: var(--color-assistant-avatar);
   }
 
   .photo.left {
@@ -86,7 +131,7 @@
   }
 
   .btns.left {
-    left: 0;
+    left: 0px;
   }
 
   .btns.right {

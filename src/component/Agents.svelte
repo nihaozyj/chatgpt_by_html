@@ -35,8 +35,6 @@
       defaultAgent = na;
       config.defaultAgent = na;
     }
-    // 用于数据库中是尾插法，此处反转数组，先创建的在前面
-    agents = agents.reverse();
   }
 
   /** 创建智能体 */
