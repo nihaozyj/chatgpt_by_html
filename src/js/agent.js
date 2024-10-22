@@ -1,5 +1,5 @@
 /** 模型列表 */
-const modelList = ['gpt4o', 'gpt4o-mini', 'glm-4-flash'];
+const modelList = ['gpt-4o', 'gpt-4o-mini', 'GLM-4-Flash'];
 
 /** 角色类型 */
 const roleType = {

@@ -5,7 +5,6 @@
 
 <script>
   import eventMgr from "../js/eventMgr";
-  import MsgContent from "./MsgContent.svelte";
   import { roleType } from "../js/agent";
   import { writable } from "svelte/store";
   import * as Con from "../js/conversation";
@@ -13,7 +12,6 @@
   import { afterUpdate } from "svelte";
   import { createChatApi } from "../js/api";
   import configProxy from "../js/config";
-  import { now } from "svelte/internal";
 
   // 创建一个引用
   let messageContainer;
@@ -83,6 +81,8 @@
       messages,
     };
     chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage);
+    // 滚动到最底部
+    setTimeout(() => scrollToBottom());
   });
 
   // 处理接口接受到的消息
@@ -96,15 +96,20 @@
       chatApi.cancel();
       return;
     }
-    if (data) {
+
+    if (data == null && err == null) {
       msgs.update((msg) => {
-        const lastMsg = msg[msg.length - 1];
-        lastMsg.message += data;
+        msg[msg.length - 1].message.trim();
         return msg;
       });
-    } else {
-      sending.set(false);
+      return sending.set(false);
     }
+
+    msgs.update((msg) => {
+      const lastMsg = msg[msg.length - 1];
+      lastMsg.message += data;
+      return msg;
+    });
   }
 
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {
@@ -126,8 +131,14 @@
   /** 重新回答 */
   function reAnswer() {}
 
-  afterUpdate(() => {
+  /** 滚动到最底部*/
+  function scrollToBottom() {
     messageContainer.scrollTop = messageContainer.scrollHeight;
+  }
+
+  afterUpdate(() => {
+    const distanceFromBottom = messageContainer.scrollHeight - messageContainer.scrollTop - messageContainer.clientHeight;
+    if (distanceFromBottom < 100) scrollToBottom();
   });
 </script>
 
@@ -140,7 +151,7 @@
         </span>
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
-      <MsgContent html={mdToHtml(item.message, item.role)} />
+      <div class="content">{@html mdToHtml(item.message, item.role)}</div>
       <div class={`${item.role === roleType.assistant ? "left" : "right"} btns`} data-index={index}>
         <button class="iconfont" title="复制">&#xe60f; 复制</button>
         <button class="iconfont" title="朗读">&#xe6ce; 朗读</button>
@@ -174,6 +185,11 @@
     border-radius: var(--radius);
     background-color: var(--color-chat-bubble-bg);
     position: relative;
+  }
+
+  .item .content {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
 
   .photo {
