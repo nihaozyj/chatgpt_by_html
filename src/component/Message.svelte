@@ -1,11 +1,19 @@
 <script context="module">
+  /** 当前消息状态，为真说明消息发送中，禁止再次发送消息，为假说明可以发送消息 */
+  export const sending = writable(false);
+</script>
+
+<script>
   import eventMgr from "../js/eventMgr";
+  import MsgContent from "./MsgContent.svelte";
   import { roleType } from "../js/agent";
   import { writable } from "svelte/store";
   import * as Con from "../js/conversation";
+  import { marked } from "marked";
+  import { afterUpdate } from "svelte";
 
-  /** 当前消息状态，为真说明消息发送中，禁止再次发送消息，为假说明可以发送消息 */
-  export const sending = writable(false);
+  // 创建一个引用
+  let messageContainer;
 
   /**
    * 当前对话
@@ -17,16 +25,29 @@
    * 消息列表
    * @type {Con.Message[]}
    */
-  let msgs = [new Con.Message(roleType.assistant, "你好，我是小助手，很高兴为您服务。", 0)];
+  export const msgs = writable([new Con.Message(roleType.assistant, "你好，我是小助手，很高兴为您服务。", 0), new Con.Message(roleType.system, "你好，请问有什么可以帮助您？", 2)]);
 
-  console.log(msgs);
-
-  function mdToHtml(md) {
-    return md;
+  function escapeHtml(html) {
+    const text = document.createTextNode(html);
+    const div = document.createElement("div");
+    div.appendChild(text);
+    return div.innerHTML;
   }
 
-  eventMgr.on(eventMgr.eventType.SEND_MESSAGE, (msg) => {
+  function mdToHtml(md, role) {
+    if (role === roleType.user) {
+      return escapeHtml(md);
+    } else {
+      return marked(md);
+    }
+  }
+
+  eventMgr.on(eventMgr.eventType.SEND_MESSAGE, function (msg) {
     sending.set(true);
+    const newMMsg = new Con.Message(roleType.user, msg, Date.now());
+    msgs.update((msg) => {
+      return [...msg, newMMsg];
+    });
   });
   eventMgr.on(eventMgr.eventType.CREATE_NEW_DIALOG, (conversational) => {});
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {});
@@ -45,17 +66,22 @@
 
   /** 重新回答 */
   function reAnswer() {}
+
+  afterUpdate(() => {
+    console.log("afterUpdate");
+  });
 </script>
 
-<main>
-  {#each msgs as item, index}
+<main bind:this={messageContainer}>
+  {#each $msgs as item, index}
     <div class="item">
       <div class={`${item.role === roleType.assistant ? "left" : "right"} photo`}>
         <span class="iconfont">
           {@html item.role !== roleType.assistant ? "&#xe761;" : "&#xe6aa;"}
         </span>
       </div>
-      <div class="content">{mdToHtml(item.message)}</div>
+      <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
+      <MsgContent html={mdToHtml(item.message, item.role)} />
       <div class={`${item.role === roleType.assistant ? "left" : "right"} btns`} data-index={index}>
         <button class="iconfont" title="复制">&#xe60f; 复制</button>
         <button class="iconfont" title="朗读">&#xe6ce; 朗读</button>

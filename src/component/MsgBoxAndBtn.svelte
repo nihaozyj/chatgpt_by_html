@@ -27,7 +27,9 @@
 
   function sendMsg() {
     if (message.trim() === "") return;
-    eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, { message, files });
+    eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, message);
+    message = "";
+    setTimeout(() => adjustHeight());
   }
 
   /** 用户更新设置 */
