@@ -35,9 +35,9 @@ async function openInputDialog(title, message) {
  * @param {string} title 弹窗标题
  * @param {Array<{value: string, label: string}>} selects 用户选择列表
  * @param {string} value 默认值
- * @returns {string | null} 用户输入的内容
+ * @returns {Promise<string>} 用户输入的内容
  */
-function openSelectDialog(title, selects, value) {
+async function openSelectDialog(title, selects, value) {
   const id = `modal-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   const selectsStr = selects.map(item => `<option value="${item.value}" ${item.value === value ? 'selected' : ''}>${item.label}</option>`).join('');
   const template = `<div class="modal" id="${id}"> <div class="modal-content select"> <div class="header"> <button data-tyle="cancel">取消</button> <h2>${title}</h2> <button data-tyle="enter">确认</button> </div> <select value="${value}">${selectsStr}</select> </div> </div>`;
@@ -66,11 +66,11 @@ function openSelectDialog(title, selects, value) {
  * 打开一个弹窗，输入一段内容，并返回输入的内容
  * @param {string} title 弹窗标题
  * @param {string} message 文本框提示信息
- * @returns {string | null} 用户输入的内容
+ * @returns {Promise<string>} 用户输入的内容
  */
-function openTextareaDialog(title, message) {
+async function openTextareaDialog(title, message) {
   const id = `modal-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-  const template = `<div class="modal" id="${id}"> <div class="modal-content textarea"> <div class="header"> <button data-tyle="cancel">取消</button> <h2>${title}</h2> <button data-tyle="enter">确认</button> </div> <textarea type="text" value="${message}" placeholder="请输入内容"></textarea> </div> </div>`;
+  const template = `<div class="modal fadeIn" id="${id}"> <div class="modal-content textarea"> <div class="header"> <button data-tyle="cancel">取消</button> <h2>${title}</h2> <button data-tyle="enter">确认</button> </div> <textarea type="text" placeholder="请输入内容">${message}</textarea> </div> </div>`;
 
   document.body.insertAdjacentHTML('beforeend', template);
 
@@ -80,14 +80,17 @@ function openTextareaDialog(title, message) {
     const cancelBtn = modal.querySelector('[data-tyle="cancel"]');
     const enterBtn = modal.querySelector('[data-tyle="enter"]');
 
-    cancelBtn.addEventListener('click', () => {
-      modal.remove();
-      resolve(null);
-    });
-    enterBtn.addEventListener('click', () => {
-      modal.remove();
-      resolve(textarea.value);
-    });
+    const close = (data) => {
+      modal.classList.remove('fadeIn');
+      modal.classList.add('fadeOut');
+      setTimeout(() => {
+        modal.remove();
+        data ? resolve(data) : resolve(null);
+      }, 300);
+    };
+
+    cancelBtn.addEventListener('click', () => close());
+    enterBtn.addEventListener('click', () => close(textarea.value));
   });
 }
 

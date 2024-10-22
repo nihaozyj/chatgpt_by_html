@@ -303,7 +303,10 @@ button.copy-btn {
 }
 
 .modal-content.textarea {
-  height: 300px;
+  width: 80%;
+  height: 80%;
+  max-width: 960px;
+  max-height: 600px;
 }
 
 .modal-content.select {
@@ -328,6 +331,10 @@ button.copy-btn {
   height: 210px;
   line-height: 2em;
   resize: none;
+}
+
+.modal-content textarea {
+  height: calc(100% - 65px);
 }
 
 .modal-content input {

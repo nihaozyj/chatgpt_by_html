@@ -7,7 +7,11 @@ class Content {
    */
   type = '';
   /**
-   * 当消息类型位文本时，对象有该属性，如 {text: 'hello world', type: 'text'}
+   * 消息类型为纯文本时
+   */
+  messgae = '';
+  /**
+   * 当消息类型为非文本时，对象有该属性，如 {text: 'hello world', type: 'text'}
    */
   text = '';
   /**

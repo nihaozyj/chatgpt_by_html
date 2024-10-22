@@ -14,6 +14,7 @@
   import "highlight.js/styles/atom-one-dark.min.css";
   import hljs from "highlight.js";
   import * as db from "../js/db";
+  import utils from "../js/utils";
 
   // 创建一个引用
   let messageContainer;
@@ -21,6 +22,9 @@
   let chatApi = null;
   // 用户当前发送的消息
   let userMsg = "";
+
+  /** 当前历史记录起始位置 */
+  let historyStart = 0;
 
   /**
    * 当前对话
@@ -36,6 +40,11 @@
 
   $: if (nowConversational) {
     msgs.set(nowConversational.messages);
+    historyStart = nowConversational.contextStart[0];
+    const i = $msgs.length - nowConversational.agent.lst_message_num;
+    if (i >= 0) {
+      historyStart = i - 1;
+    }
   }
 
   function escapeHtml(html) {
@@ -73,9 +82,14 @@
   eventMgr.on(eventMgr.eventType.SEND_MESSAGE, function (msg) {
     userMsg = msg;
     sending.set(true);
+
     const newMsg = new Con.Message(roleType.user, msg, Date.now());
     const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
-    msgs.update((msg) => [...msg, newMsg, resMsg]);
+    const index = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, historyStart);
+    const history = JSON.parse(JSON.stringify($msgs)).splice(index, nowConversational.agent.lst_message_num, historyStart);
+    console.log(history);
+
+    nowConversational.messages = [...nowConversational.messages, newMsg, resMsg];
     chatApi = createChatApi();
     const { agent, contextStart } = nowConversational;
     // 消息格式化
@@ -84,6 +98,7 @@
         role: roleType.system,
         content: agent.setting,
       },
+      ...history,
       {
         role: newMsg.role,
         content: newMsg.message,
@@ -158,14 +173,21 @@
     setTimeout(() => scrollToBottom());
   });
 
-  /** 复制 */
-  function copy() {}
-
   /** 朗读 */
   function read() {}
 
   /** 修改 */
-  function modify() {}
+  async function modify(text, index) {
+    const newtext = await utils.openTextareaDialog("修改消息", text);
+    if (!newtext) return;
+    nowConversational.messages[index].message = newtext;
+    nowConversational = nowConversational;
+    try {
+      await db.updateData(db.storeNames.conversations, nowConversational);
+    } catch (e) {
+      console.error("更新失败!", e);
+    }
+  }
 
   /** 删除 */
   function deleteMsg() {}
@@ -223,11 +245,14 @@
       <div class="content">{@html mdToHtml(item.message, item.role)}</div>
       <div class="left btns" data-index={index}>
         <button class="iconfont" title="复制" on:click={() => copyContent(item.message)}>&#xe60f;</button>
-        <button class="iconfont" title="修改">&#xe60e;</button>
+        <button class="iconfont" title="修改" on:click={() => modify(item.message, index)}>&#xe60e;</button>
         <button class="iconfont" title="删除">&#xe657;</button>
         <button class="iconfont" title="重新回答">&#xe6ff;</button>
       </div>
     </div>
+    {#if historyStart > 1 && index === historyStart}
+      <div class="dividing-line">本次对话，将携带下方所有消息记录</div>
+    {/if}
   {/each}
 </main>
 
@@ -240,6 +265,7 @@
     margin-top: 20px;
     padding: 0 50px 0 60px;
     overflow: auto;
+    overflow-x: hidden;
     scroll-behavior: smooth;
   }
 
@@ -248,7 +274,7 @@
   }
 
   .item {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     padding: 1em;
     border-radius: var(--radius);
     background-color: var(--color-chat-bubble-bg);
@@ -301,5 +327,28 @@
 
   .btns.left {
     left: 0px;
+  }
+
+  .dividing-line {
+    margin: auto;
+    margin-bottom: 35px;
+    text-align: center;
+    position: relative;
+    padding: 0 15px;
+    background-color: var(--color-bg);
+    color: var(--color-secondary-text);
+    font-size: 12px;
+    user-select: none;
+  }
+
+  .dividing-line::before {
+    content: "";
+    position: absolute;
+    height: 1px;
+    left: -1000px;
+    top: 50%;
+    width: calc(100% + 2000px);
+    background-color: var(--color-border);
+    z-index: -999;
   }
 </style>
