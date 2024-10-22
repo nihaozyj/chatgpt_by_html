@@ -29,17 +29,18 @@
   async function init() {
     try {
       conversations = await db.getAllData(db.storeNames.conversations);
-      if (conversations.length > 0) {
-        nowConvasationId = conversations[0].id;
-        eventMgr.emit(type.OPEN_DIALOG, conversations[0]);
-      }
     } catch (error) {
-      conversations = [];
       if (Date.now() - timerBegin < readTimeout) {
         setTimeout(() => init());
       } else {
         console.error("读取数据库超时");
       }
+    }
+    if (conversations.length > 0) {
+      nowConvasationId = conversations[0].id;
+      eventMgr.emit(type.OPEN_DIALOG, conversations[0]);
+    } else {
+      eventMgr.emit(type.REQUEST_CREATE_NEW_DIALOG);
     }
   }
 
@@ -49,12 +50,44 @@
   }
 
   eventMgr.on(type.CREATE_NEW_DIALOG, (data) => {
-    console.log(data);
     conversations.unshift(data);
     conversations = conversations;
     nowConvasationId = data.id;
     eventMgr.emit(type.OPEN_DIALOG, data);
   });
+
+  /** 置顶 */
+  async function handleTop(conversation) {
+    conversations.slice(conversations.indexOf(conversation), 1);
+    try {
+      await db.updateData(db.storeNames.conversations, conversation);
+    } catch (error) {
+      console.error("更新数据库失败, 置顶信息可能丢失");
+    }
+    conversations = [conversation, ...conversations];
+  }
+
+  /** 删除 */
+  function handleDelete(conversation) {
+    try {
+      db.updateData(db.storeNames.conversations, conversation);
+    } catch (error) {
+      console.error("删除失败，可能id为找到或者系统错误！");
+    }
+    conversations.splice(conversations.indexOf(conversation), 1);
+    conversations = conversations;
+    if (conversation.id === nowConvasationId) {
+      if (conversations.length > 0) {
+        nowConvasationId = conversations[0].id;
+        eventMgr.emit(type.OPEN_DIALOG, conversations[0]);
+      } else {
+        eventMgr.emit(type.REQUEST_CREATE_NEW_DIALOG);
+      }
+    }
+  }
+
+  /** 编辑 */
+  function handleEdit(conversation) {}
 </script>
 
 <main style="width: {width}px;">
@@ -77,9 +110,9 @@
         <div class="btn" on:mouseenter={btnsSwitch} on:mouseleave={btnsSwitch}>
           <button class="iconfont">&#xe60e;</button>
           <div class="btns" style="display: none;">
-            <button class="iconfont" title="编辑">&#xe60e;</button>
-            <button class="iconfont" title="置顶">&#xe60d;</button>
-            <button class="iconfont" title="删除">&#xe657;</button>
+            <button class="iconfont" title="编辑" on:click={() => handleEdit(item)}>&#xe60e;</button>
+            <button class="iconfont" title="置顶" on:click={() => handleTop(item)}>&#xe60d;</button>
+            <button class="iconfont" title="删除" on:click={() => handleDelete(item)}>&#xe657;</button>
           </div>
         </div>
       </div>

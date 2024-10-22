@@ -6,6 +6,7 @@
   import config from "../js/config.js";
   import * as Ag from "../js/agent";
   import * as db from "../js/db";
+  import eventMgr from "../js/eventMgr.js";
   export let isOpen = false;
 
   let helperIsOpen = false;
@@ -67,6 +68,12 @@
     }
   }
 
+  // 监听请求创建对话的事件
+  eventMgr.on(eventMgr.eventType.REQUEST_CREATE_NEW_DIALOG, () => {
+    // 使用默认智能体创建对话
+    handleConversation(defaultAgent);
+  });
+
   /** 删除智能体 */
   async function handleDelete(_agent) {
     try {
@@ -84,6 +91,8 @@
     config.defaultAgent = _agent;
     defaultAgent = _agent;
   }
+
+  loadAgents();
 </script>
 
 <ResizableModal {isOpen} width="1" height="1">
@@ -113,18 +122,20 @@
         {/if}
         <!-- 其他智能体 -->
         {#each agents as agent}
-          <div class="item">
-            <button class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(agent)}>
-              <h2>{agent.name}</h2>
-              <p>{agent.setting}</p>
-            </button>
-            <div class="ctrl">
-              <button on:click={() => handleConversation(agent)}>对话</button>
-              <button on:click={() => handleSetDefault(agent)}>设为默认</button>
-              <button on:click={() => handleEdit(agent)}>编辑</button>
-              <button on:click={() => handleDelete(agent)}>删除</button>
+          {#if agent.id !== defaultAgent.id}
+            <div class="item">
+              <button class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(agent)}>
+                <h2>{agent.name}</h2>
+                <p>{agent.setting}</p>
+              </button>
+              <div class="ctrl">
+                <button on:click={() => handleConversation(agent)}>对话</button>
+                <button on:click={() => handleSetDefault(agent)}>设为默认</button>
+                <button on:click={() => handleEdit(agent)}>编辑</button>
+                <button on:click={() => handleDelete(agent)}>删除</button>
+              </div>
             </div>
-          </div>
+          {/if}
         {/each}
       </div>
     </div>

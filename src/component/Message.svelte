@@ -34,7 +34,6 @@
   export const msgs = writable([new Con.Message(roleType.assistant, "你好，我是小助手，很高兴为您服务。", 0), new Con.Message(roleType.system, "你好，请问有什么可以帮助您？", 2)]);
 
   $: if (nowConversational) {
-    console.log("当前对话变更：" + nowConversational.title);
     msgs.set(nowConversational.messages);
   }
 
@@ -90,11 +89,19 @@
   function handleMessage(data, err) {
     if (!$sending) return;
     if (err) {
-      console.error(err);
       sending.set(false);
-      eventMgr.emit(eventMgr.eventType.REDO_MESSAGE, userMsg);
       // 请求失败，取消本次请求
       chatApi.cancel();
+      // 输出错误信息
+      msgs.update((msg) => {
+        const lastMsg = msg[msg.length - 1];
+        lastMsg.message += `\`\`\` json\n${err}\`\`\`\n出现错误了，检测到的可能的原因如下：\n`;
+        if (nowConversational.agent.model === "") lastMsg.message += "* 模型未设置\n";
+        if (nowConversational.agent.api_key === "") lastMsg.message += "* API KEY未设置\n";
+        if (nowConversational.agent.base_url === "") lastMsg.message += "* API请求地址未设置\n";
+        lastMsg.message += "* 模型名称对大小写敏感，请检查是否正确设置\n";
+        return msg;
+      });
       return;
     }
 
