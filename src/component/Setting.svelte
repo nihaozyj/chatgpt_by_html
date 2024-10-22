@@ -55,7 +55,7 @@
 
   /** 失去焦点*/
   function mouseLeave(e, index) {
-    const p = e.target.parentElement.querySelector("p");
+    const p = e.target.parentElement.querySelector(".text button");
     keyList[index] = p.textContent = e.target.value;
     configCopy.shhortcuts = keyList = keyList.filter((str) => str && str.trim() !== "");
     p.classList.remove("hide");
@@ -73,7 +73,7 @@
     keyList.unshift("");
     keyList = keyList;
     setTimeout(() => {
-      const p = listDom.querySelector(".instruct:first-child p");
+      const p = listDom.querySelector(".instruct:first-child .text button");
       const input = listDom.querySelector(".instruct:first-child input");
       p.classList.add("hide");
       input.classList.remove("hide");
@@ -162,7 +162,7 @@
       {#each keyList as key, index}
         <div class="instruct">
           <div class="text">
-            <p on:click={mouseDown}>{key}</p>
+            <button on:click={mouseDown}>{key}</button>
             <input on:blur={() => mouseLeave(event, index)} class="hide" type="text" value={key} placeholder="请输入指令内容" />
           </div>
           <button on:click={() => deleteItem(index)} class="iconfont">&#xe657;</button>
@@ -240,11 +240,13 @@
     border: 1px solid var(--color-border);
   }
 
-  .text p {
+  .text button {
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
+    color: var(--color-text);
   }
 
   .hide {

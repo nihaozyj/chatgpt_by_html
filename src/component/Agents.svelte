@@ -99,10 +99,10 @@
         <!-- 默认智能体 -->
         {#if defaultAgent}
           <div class="item default">
-            <div class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(defaultAgent)}>
+            <button class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(defaultAgent)}>
               <h2>{defaultAgent.name}</h2>
               <p>{defaultAgent.setting}</p>
-            </div>
+            </button>
             <div class="ctrl">
               <button on:click={() => handleConversation(defaultAgent)}>对话</button>
               <button on:click={() => handleSetDefault(defaultAgent)}>设为默认</button>
@@ -114,10 +114,10 @@
         <!-- 其他智能体 -->
         {#each agents as agent}
           <div class="item">
-            <div class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(agent)}>
+            <button class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(agent)}>
               <h2>{agent.name}</h2>
               <p>{agent.setting}</p>
-            </div>
+            </button>
             <div class="ctrl">
               <button on:click={() => handleConversation(agent)}>对话</button>
               <button on:click={() => handleSetDefault(agent)}>设为默认</button>
