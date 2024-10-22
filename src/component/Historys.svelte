@@ -65,7 +65,8 @@
 
   /** 置顶 */
   async function handleTop(conversation) {
-    conversations.slice(conversations.indexOf(conversation), 1);
+    const index = conversations.findIndex((item) => item.id === conversation.id);
+    conversations.splice(index, 1);
     try {
       await db.updateData(db.storeNames.conversations, conversation);
     } catch (error) {
@@ -139,7 +140,6 @@
     const con = conversations.find((item) => item.id === nowConvasationId);
     if (!con) return console.error("当前对话不存在");
     con.agent = event.detail;
-    console.log(`我执行呢`, event.detail);
     try {
       await db.updateData(db.storeNames.conversations, con);
       eventMgr.emit(type.DIALOG_UPDATE, con);
