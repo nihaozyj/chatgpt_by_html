@@ -47,6 +47,14 @@
     nowConvasationId = conversation.id;
     eventMgr.emit(type.OPEN_DIALOG, conversation);
   }
+
+  eventMgr.on(type.CREATE_NEW_DIALOG, (data) => {
+    console.log(data);
+    conversations.unshift(data);
+    conversations = conversations;
+    nowConvasationId = data.id;
+    eventMgr.emit(type.OPEN_DIALOG, data);
+  });
 </script>
 
 <main style="width: {width}px;">

@@ -1,4 +1,3 @@
-
 const dbName = 'ChatAppDB';
 const dbVersion = 1;
 const storeNames = {
@@ -10,7 +9,10 @@ const storeNames = {
 
 let db;
 
-// 打开数据库
+/**
+ * 打开数据库
+ * @returns {Promise<IDBDatabase>} 数据库实例
+ */
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, dbVersion);
@@ -37,31 +39,58 @@ function openDB() {
   });
 }
 
-// 添加数据
+/**
+ * 添加数据
+ * @param {string} storeName - 存储名称
+ * @param {Object} data - 要添加的数据
+ * @returns {Promise<Object>} 添加的数据
+ */
 function addData(storeName, data) {
+  // 自动添加时间戳
+  const dataWithTimestamp = {
+    ...data,
+    updatedAt: new Date().toISOString(), // 添加时间戳
+  };
+
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readwrite');
     const store = transaction.objectStore(storeName);
-    const request = store.add(data);
+    const request = store.add(dataWithTimestamp);
 
-    request.onsuccess = () => resolve(data);
+    request.onsuccess = () => resolve(dataWithTimestamp);
     request.onerror = (event) => reject(event.target.error);
   });
 }
 
-// 更新数据
+/**
+ * 更新数据
+ * @param {string} storeName - 存储名称
+ * @param {Object} data - 要更新的数据
+ * @returns {Promise<Object>} 更新后的数据
+ */
 function updateData(storeName, data) {
+  // 自动更新时间戳
+  const dataWithTimestamp = {
+    ...data,
+    updatedAt: new Date().toISOString(), // 更新时间戳
+  };
+
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readwrite');
     const store = transaction.objectStore(storeName);
-    const request = store.put(data);
+    const request = store.put(dataWithTimestamp);
 
-    request.onsuccess = () => resolve(data);
+    request.onsuccess = () => resolve(dataWithTimestamp);
     request.onerror = (event) => reject(event.target.error);
   });
 }
 
-// 删除数据
+/**
+ * 删除数据
+ * @param {string} storeName - 存储名称
+ * @param {string} id - 要删除的数据的ID
+ * @returns {Promise<string>} 删除的数据的ID
+ */
 function deleteData(storeName, id) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readwrite');
@@ -73,7 +102,12 @@ function deleteData(storeName, id) {
   });
 }
 
-// 查询数据
+/**
+ * 查询数据
+ * @param {string} storeName - 存储名称
+ * @param {string} id - 要查询的数据的ID
+ * @returns {Promise<Object|null>} 查询到的数据或null
+ */
 function getData(storeName, id) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readonly');
@@ -85,19 +119,31 @@ function getData(storeName, id) {
   });
 }
 
-// 获取所有数据
+/**
+ * 获取所有数据并按更新时间排序
+ * @param {string} storeName - 存储名称
+ * @returns {Promise<Array<Object>>} 按更新时间排序的所有数据
+ */
 function getAllData(storeName) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readonly');
     const store = transaction.objectStore(storeName);
     const request = store.getAll();
 
-    request.onsuccess = (event) => resolve(event.target.result);
+    request.onsuccess = (event) => {
+      const data = event.target.result;
+      // 按 updatedAt 字段排序，时间越近排越前
+      data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      resolve(data);
+    };
     request.onerror = (event) => reject(event.target.error);
   });
 }
 
-// 初始化数据库
+/**
+ * 初始化数据库
+ * @returns {Promise<void>}
+ */
 async function initDB() {
   await openDB();
 }
