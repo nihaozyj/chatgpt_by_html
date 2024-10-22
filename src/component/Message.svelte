@@ -11,9 +11,16 @@
   import * as Con from "../js/conversation";
   import { marked } from "marked";
   import { afterUpdate } from "svelte";
+  import { createChatApi } from "../js/api";
+  import configProxy from "../js/config";
+  import { now } from "svelte/internal";
 
   // 创建一个引用
   let messageContainer;
+  // 聊天请求实例
+  let chatApi = null;
+  // 用户当前发送的消息
+  let userMsg = "";
 
   /**
    * 当前对话
@@ -26,6 +33,11 @@
    * @type {Con.Message[]}
    */
   export const msgs = writable([new Con.Message(roleType.assistant, "你好，我是小助手，很高兴为您服务。", 0), new Con.Message(roleType.system, "你好，请问有什么可以帮助您？", 2)]);
+
+  $: if (nowConversational) {
+    console.log("当前对话变更：" + nowConversational.title);
+    msgs.set(nowConversational.messages);
+  }
 
   function escapeHtml(html) {
     const text = document.createTextNode(html);
@@ -43,14 +55,61 @@
   }
 
   eventMgr.on(eventMgr.eventType.SEND_MESSAGE, function (msg) {
+    userMsg = msg;
     sending.set(true);
-    const newMMsg = new Con.Message(roleType.user, msg, Date.now());
-    msgs.update((msg) => {
-      return [...msg, newMMsg];
-    });
+    const newMsg = new Con.Message(roleType.user, msg, Date.now());
+    const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
+    msgs.update((msg) => [...msg, newMsg, resMsg]);
+    chatApi = createChatApi();
+    const { agent, contextStart } = nowConversational;
+    // 消息格式化
+    const messages = [
+      {
+        role: roleType.system,
+        content: agent.setting,
+      },
+      {
+        role: newMsg.role,
+        content: newMsg.message,
+      },
+    ];
+    // 组建请求体
+    const body = {
+      model: agent.model,
+      stream: true,
+      temperature: agent.temperature,
+      top_p: agent.top_p,
+      presence_penalty: agent.frequency_penalty,
+      messages,
+    };
+    chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage);
   });
-  eventMgr.on(eventMgr.eventType.CREATE_NEW_DIALOG, (conversational) => {});
-  eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {});
+
+  // 处理接口接受到的消息
+  function handleMessage(data, err) {
+    if (!$sending) return;
+    if (err) {
+      console.error(err);
+      sending.set(false);
+      eventMgr.emit(eventMgr.eventType.REDO_MESSAGE, userMsg);
+      // 请求失败，取消本次请求
+      chatApi.cancel();
+      return;
+    }
+    if (data) {
+      msgs.update((msg) => {
+        const lastMsg = msg[msg.length - 1];
+        lastMsg.message += data;
+        return msg;
+      });
+    } else {
+      sending.set(false);
+    }
+  }
+
+  eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {
+    nowConversational = conversational;
+  });
 
   /** 复制 */
   function copy() {}
@@ -68,7 +127,7 @@
   function reAnswer() {}
 
   afterUpdate(() => {
-    console.log("afterUpdate");
+    messageContainer.scrollTop = messageContainer.scrollHeight;
   });
 </script>
 
@@ -102,6 +161,7 @@
     margin-top: 20px;
     padding: 0 50px 0 60px;
     overflow: auto;
+    scroll-behavior: smooth;
   }
 
   * {

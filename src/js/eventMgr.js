@@ -35,6 +35,8 @@ const eventType = {
   SEND_MESSAGE: 'sendMessage',
   /** 设置更新 */
   UPDATE_SETTING: 'updateSetting',
+  /** 消息撤销发送，文本回填到文本框 */
+  REDO_MESSAGE: 'redoMessage',
 };
 
 

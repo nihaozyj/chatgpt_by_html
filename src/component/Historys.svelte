@@ -8,7 +8,7 @@
   let nowConvasationId = 0;
 
   // 读取数据库超时时间
-  const readTimeout = 10000;
+  const readTimeout = 1000 * 3;
   let timerBegin = Date.now();
   // 事件类型
   const { eventType: type } = eventMgr;
@@ -31,10 +31,10 @@
       conversations = await db.getAllData(db.storeNames.conversations);
       if (conversations.length > 0) {
         nowConvasationId = conversations[0].id;
+        eventMgr.emit(type.OPEN_DIALOG, conversations[0]);
       }
     } catch (error) {
       conversations = [];
-      console.error(error);
       if (Date.now() - timerBegin < readTimeout) {
         setTimeout(() => init());
       } else {
