@@ -36,7 +36,7 @@
    * 消息列表
    * @type {Con.Message[]}
    */
-  export const msgs = writable([new Con.Message(roleType.assistant, "你好，我是小助手，很高兴为您服务。", 0), new Con.Message(roleType.system, "你好，请问有什么可以帮助您？", 2)]);
+  export const msgs = writable([]);
 
   $: if (nowConversational) {
     msgs.set(nowConversational.messages);
@@ -101,7 +101,7 @@
       ...history,
       {
         role: newMsg.role,
-        content: newMsg.message,
+        content: newMsg.content,
       },
     ];
     // 组建请求体
@@ -113,7 +113,7 @@
       presence_penalty: agent.frequency_penalty,
       messages,
     };
-    chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage);
+    chatApi.chat(`${agent.base_url}/v1/chat/completions`, agent.api_key, body, handleMessage);
     // 滚动到最底部
     setTimeout(() => scrollToBottom());
   });
@@ -128,11 +128,11 @@
       // 输出错误信息
       msgs.update((msg) => {
         const lastMsg = msg[msg.length - 1];
-        lastMsg.message += `\`\`\` json\n${err}\`\`\`\n出现错误了，检测到的可能的原因如下：\n`;
-        if (nowConversational.agent.model === "") lastMsg.message += "* 模型未设置\n";
-        if (nowConversational.agent.api_key === "") lastMsg.message += "* API KEY未设置\n";
-        if (nowConversational.agent.base_url === "") lastMsg.message += "* API请求地址未设置\n";
-        lastMsg.message += "* 模型名称对大小写敏感，请检查是否正确设置\n";
+        lastMsg.content += `\`\`\` json\n${err}\`\`\`\n出现错误了，检测到的可能的原因如下：\n`;
+        if (nowConversational.agent.model === "") lastMsg.content += "* 模型未设置\n";
+        if (nowConversational.agent.api_key === "") lastMsg.content += "* API KEY未设置\n";
+        if (nowConversational.agent.base_url === "") lastMsg.content += "* API请求地址未设置\n";
+        lastMsg.content += "* 模型名称对大小写敏感，请检查是否正确设置\n";
         return msg;
       });
 
@@ -163,7 +163,7 @@
 
     msgs.update((msg) => {
       const lastMsg = msg[msg.length - 1];
-      lastMsg.message += data;
+      lastMsg.content += data;
       return msg;
     });
   }
@@ -180,7 +180,7 @@
   async function modify(text, index) {
     const newtext = await utils.openTextareaDialog("修改消息", text);
     if (!newtext) return;
-    nowConversational.messages[index].message = newtext;
+    nowConversational.messages[index].content = newtext;
     nowConversational = nowConversational;
     try {
       await db.updateData(db.storeNames.conversations, nowConversational);
@@ -242,10 +242,10 @@
         </span>
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
-      <div class="content">{@html mdToHtml(item.message, item.role)}</div>
+      <div class="content">{@html mdToHtml(item.content, item.role)}</div>
       <div class="left btns" data-index={index}>
-        <button class="iconfont" title="复制" on:click={() => copyContent(item.message)}>&#xe60f;</button>
-        <button class="iconfont" title="修改" on:click={() => modify(item.message, index)}>&#xe60e;</button>
+        <button class="iconfont" title="复制" on:click={() => copyContent(item.content)}>&#xe60f;</button>
+        <button class="iconfont" title="修改" on:click={() => modify(item.content, index)}>&#xe60e;</button>
         <button class="iconfont" title="删除">&#xe657;</button>
         <button class="iconfont" title="重新回答">&#xe6ff;</button>
       </div>

@@ -29,12 +29,12 @@ class Message {
   /**
    * 构造函数
    * @param {keyof roleType} role 消息的角色，"user"表示用户，"agent"表示智能体
-   * @param {string | Content[]} message 消息内容
+   * @param {string | Content[]} content 消息内容
    * @param {number} timestamp 消息发送时间
    */
-  constructor(role, message, timestamp) {
+  constructor(role, content, timestamp) {
     this.role = role;
-    this.message = message;
+    this.content = content;
     this.timestamp = timestamp;
   }
 }

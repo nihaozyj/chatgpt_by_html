@@ -8,9 +8,7 @@ export function createChatApi() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'Cache-Control': 'no-cache',
-          'Expires': '0'
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify(body),
         signal,// 将信号传递给 fetch
@@ -18,6 +16,7 @@ export function createChatApi() {
       });
 
       if (!response.ok) {
+        console.error(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
