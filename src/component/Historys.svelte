@@ -70,7 +70,10 @@
   <div class="historys">
     {#each conversations as item}
       <div class={`item ${item.id === nowConvasationId ? "active" : ""}`}>
-        <h2 on:click={() => handleActive(item)}><span class="iconfont">&#xe69d;</span> {item.title}</h2>
+        <h2 on:keydown={(event) => event.key === "Enter" && handleActive(item)} on:click={() => handleActive(item)}>
+          <span class="iconfont">&#xe69d;</span>
+          {item.title}
+        </h2>
         <div class="btn" on:mouseenter={btnsSwitch} on:mouseleave={btnsSwitch}>
           <button class="iconfont">&#xe60e;</button>
           <div class="btns" style="display: none;">

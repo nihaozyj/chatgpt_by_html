@@ -9,9 +9,10 @@
   import { writable } from "svelte/store";
   import * as Con from "../js/conversation";
   import { marked } from "marked";
-  import { afterUpdate } from "svelte";
+  import { afterUpdate, onMount } from "svelte";
   import { createChatApi } from "../js/api";
-  import configProxy from "../js/config";
+  import "highlight.js/styles/atom-one-dark.min.css";
+  import hljs from "highlight.js";
 
   // 创建一个引用
   let messageContainer;
@@ -139,6 +140,12 @@
   afterUpdate(() => {
     const distanceFromBottom = messageContainer.scrollHeight - messageContainer.scrollTop - messageContainer.clientHeight;
     if (distanceFromBottom < 100) scrollToBottom();
+
+    const codeBlocks = messageContainer.querySelectorAll("pre code");
+    if (codeBlocks.length > 0) {
+      const lastCodeBlock = codeBlocks[codeBlocks.length - 1];
+      hljs.highlightElement(lastCodeBlock);
+    }
   });
 </script>
 
