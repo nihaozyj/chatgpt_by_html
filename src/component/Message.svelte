@@ -13,6 +13,7 @@
   import { createChatApi } from "../js/api";
   import "highlight.js/styles/atom-one-dark.min.css";
   import hljs from "highlight.js";
+  import * as db from "../js/db";
 
   // 创建一个引用
   let messageContainer;
@@ -46,9 +47,26 @@
 
   function mdToHtml(md, role) {
     if (role === roleType.user) {
-      return escapeHtml(md);
+      return escapeHtml(md).trim();
     } else {
-      return marked(md);
+      // 使用 marked 解析 Markdown
+      const html = marked(md).trim();
+      // 使用 DOMParser 解析 HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      // 查找所有的代码块
+      const codeBlocks = doc.querySelectorAll("pre code");
+      codeBlocks.forEach((codeBlock) => {
+        // 创建复制按钮
+        const copyButton = document.createElement("button");
+        copyButton.innerHTML = "&#xe60f; 复制代码";
+        copyButton.className = "copy-btn iconfont";
+        // 将按钮插入到代码块上方
+        codeBlock.parentNode.insertBefore(copyButton, codeBlock.parentNode.firstChild);
+      });
+
+      return doc.body.innerHTML;
     }
   }
 
@@ -86,7 +104,7 @@
   });
 
   // 处理接口接受到的消息
-  function handleMessage(data, err) {
+  async function handleMessage(data, err) {
     if (!$sending) return;
     if (err) {
       sending.set(false);
@@ -102,6 +120,13 @@
         lastMsg.message += "* 模型名称对大小写敏感，请检查是否正确设置\n";
         return msg;
       });
+
+      nowConversational.messages = $msgs;
+      try {
+        await db.updateData(db.storeNames.conversations, nowConversational);
+      } catch (e) {
+        console.error("更新失败!", e);
+      }
       return;
     }
 
@@ -110,6 +135,14 @@
         msg[msg.length - 1].message.trim();
         return msg;
       });
+      // 对话结束，写入数据库
+      nowConversational.messages = $msgs;
+      try {
+        await db.updateData(db.storeNames.conversations, nowConversational);
+      } catch (e) {
+        console.error("更新失败!", e);
+      }
+
       return sending.set(false);
     }
 
@@ -122,6 +155,7 @@
 
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {
     nowConversational = conversational;
+    setTimeout(() => scrollToBottom());
   });
 
   /** 复制 */
@@ -146,13 +180,34 @@
 
   afterUpdate(() => {
     const distanceFromBottom = messageContainer.scrollHeight - messageContainer.scrollTop - messageContainer.clientHeight;
-    if (distanceFromBottom < 100) scrollToBottom();
+    if (distanceFromBottom < 150) scrollToBottom();
 
     const codeBlocks = messageContainer.querySelectorAll("pre code");
     if (codeBlocks.length > 0) {
       const lastCodeBlock = codeBlocks[codeBlocks.length - 1];
       hljs.highlightElement(lastCodeBlock);
     }
+  });
+
+  function copyContent(content) {
+    // 创建一个临时文本区域
+    const textarea = document.createElement("textarea");
+    textarea.value = content; // 设置要复制的内容
+    document.body.appendChild(textarea); // 将文本区域添加到文档中
+    textarea.select(); // 选中内容
+    document.execCommand("copy"); // 执行复制命令
+    document.body.removeChild(textarea); // 移除临时文本区域
+  }
+
+  // 监听点击事件，实现代码块的复制
+  onMount(() => {
+    messageContainer.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target.classList.contains("copy-btn")) {
+        const codeBlock = target.parentNode.querySelector("code");
+        copyContent(codeBlock.textContent);
+      }
+    });
   });
 </script>
 
@@ -167,11 +222,10 @@
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
       <div class="content">{@html mdToHtml(item.message, item.role)}</div>
       <div class={`${item.role === roleType.assistant ? "left" : "right"} btns`} data-index={index}>
-        <button class="iconfont" title="复制">&#xe60f; 复制</button>
-        <button class="iconfont" title="朗读">&#xe6ce; 朗读</button>
-        <button class="iconfont" title="修改">&#xe60e; 修改</button>
-        <button class="iconfont" title="删除">&#xe657; 删除</button>
-        <button class="iconfont" title="重新回答">&#xe6ff; 重新回答</button>
+        <button class="iconfont" title="复制" on:click={() => copyContent(item.message)}>&#xe60f;</button>
+        <button class="iconfont" title="修改">&#xe60e;</button>
+        <button class="iconfont" title="删除">&#xe657;</button>
+        <button class="iconfont" title="重新回答">&#xe6ff;</button>
       </div>
     </div>
   {/each}
@@ -194,7 +248,7 @@
   }
 
   .item {
-    margin-bottom: 40px;
+    margin-bottom: 60px;
     padding: 0.72em;
     border-radius: var(--radius);
     background-color: var(--color-chat-bubble-bg);
@@ -240,10 +294,7 @@
 
   .btns button {
     font-size: 12px;
-    padding: 2px 5px;
-    color: var(--color-highlight-text);
-    background-color: var(--color-chat-bubble-bg);
-    border-radius: var(--btn-radius-small);
+    padding: 3px 8px;
   }
 
   .btns.left {

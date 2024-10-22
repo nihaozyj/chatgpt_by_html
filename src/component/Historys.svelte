@@ -1,5 +1,6 @@
 <script>
   import eventMgr from "../js/eventMgr.js";
+  import utils from "../js/utils.js";
   import * as db from "../js/db.js";
   import { onMount } from "svelte";
   export let width;
@@ -70,7 +71,7 @@
   /** 删除 */
   function handleDelete(conversation) {
     try {
-      db.updateData(db.storeNames.conversations, conversation);
+      db.deleteData(db.storeNames.conversations, conversation.id);
     } catch (error) {
       console.error("删除失败，可能id为找到或者系统错误！");
     }
@@ -87,7 +88,21 @@
   }
 
   /** 编辑 */
-  function handleEdit(conversation) {}
+  function handleEdit(conversation) {
+    utils.openInputDialog("编辑对话标题", conversation.title).then((title) => {
+      if (!title) return;
+
+      try {
+        conversation.title = title;
+        const con = conversations.find((item) => item.id === conversation.id);
+        con.title = title;
+        conversations = conversations;
+        db.updateData(db.storeNames.conversations, conversation);
+      } catch (error) {
+        console.error("更新数据库失败, 编辑信息可能丢失");
+      }
+    });
+  }
 </script>
 
 <main style="width: {width}px;">
@@ -108,7 +123,7 @@
           {item.title}
         </h2>
         <div class="btn" on:mouseenter={btnsSwitch} on:mouseleave={btnsSwitch}>
-          <button class="iconfont">&#xe60e;</button>
+          <button class="iconfont">&#xe61d;</button>
           <div class="btns" style="display: none;">
             <button class="iconfont" title="编辑" on:click={() => handleEdit(item)}>&#xe60e;</button>
             <button class="iconfont" title="置顶" on:click={() => handleTop(item)}>&#xe60d;</button>
@@ -180,6 +195,7 @@
     justify-content: space-between;
     margin-bottom: 10px;
     font-size: 14px;
+    padding: 5px 0;
     padding-left: 5px;
   }
 

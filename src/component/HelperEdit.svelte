@@ -130,7 +130,7 @@
             </div>
             <div class="item">
               <span>附带历史消息数</span>
-              <input bind:value={agent.lst_message_num} type="text" placeholder="表示携带的上下文轮次，一轮对话包含两条消息" />
+              <input bind:value={agent.lst_message_num} type="text" placeholder="携带的上下文条数" />
             </div>
           {/if}
         </div>

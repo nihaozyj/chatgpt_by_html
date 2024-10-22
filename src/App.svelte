@@ -54,9 +54,6 @@
 <!-- 智能体列表 -->
 <Agents bind:isOpen={$agentsIsOpen} />
 
-<!-- 消息框 -->
-<!-- <ResizableModal width={300} height={300} title="消息框" isOpen={true}></ResizableModal> -->
-
 <style scoped>
 	main {
 		display: flex;
