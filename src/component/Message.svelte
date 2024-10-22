@@ -214,14 +214,14 @@
 <main bind:this={messageContainer}>
   {#each $msgs as item, index}
     <div class="item">
-      <div class={`${item.role === roleType.assistant ? "left" : "right"} photo`}>
+      <div class="left photo">
         <span class="iconfont">
           {@html item.role !== roleType.assistant ? "&#xe761;" : "&#xe6aa;"}
         </span>
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
       <div class="content">{@html mdToHtml(item.message, item.role)}</div>
-      <div class={`${item.role === roleType.assistant ? "left" : "right"} btns`} data-index={index}>
+      <div class="left btns" data-index={index}>
         <button class="iconfont" title="复制" on:click={() => copyContent(item.message)}>&#xe60f;</button>
         <button class="iconfont" title="修改">&#xe60e;</button>
         <button class="iconfont" title="删除">&#xe657;</button>
@@ -249,7 +249,7 @@
 
   .item {
     margin-bottom: 60px;
-    padding: 0.72em;
+    padding: 1em;
     border-radius: var(--radius);
     background-color: var(--color-chat-bubble-bg);
     position: relative;
@@ -268,11 +268,6 @@
   .photo.left {
     left: -40px;
   }
-
-  .photo.right {
-    right: -40px;
-  }
-
   .photo span {
     font-size: 2em;
   }
@@ -289,19 +284,22 @@
 
   .btns {
     position: absolute;
-    bottom: -28px;
+    bottom: -25px;
+    display: none;
+  }
+
+  .item:hover .btns {
+    display: block;
+    width: 100%;
   }
 
   .btns button {
     font-size: 12px;
-    padding: 3px 8px;
+    padding: 5px 8px;
+    margin: 0 !important;
   }
 
   .btns.left {
     left: 0px;
-  }
-
-  .btns.right {
-    right: 0;
   }
 </style>

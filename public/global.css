@@ -62,11 +62,11 @@ body.dark {
   --color-logo-bg: #6ab7ff;
 
   /** 聊天背景气泡背景色 */
-  --color-chat-bubble-bg: #232b33;
+  --color-chat-bubble-bg: #282A2B;
   /** 助理和用户头像颜色 */
   --color-assistant-avatar: #2f7e3a;
   /** 代码块背景色 */
-  --color-code-bg: #282C34;
+  --color-code-bg: #1F2128;
 
   /** 圆角大小 */
   --radius: 5px;
