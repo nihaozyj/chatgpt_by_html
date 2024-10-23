@@ -1,4 +1,5 @@
 <script context="module">
+  import Message from "./Message.svelte";
   /** 当前消息状态，为真说明消息发送中，禁止再次发送消息，为假说明可以发送消息 */
   export const sending = writable(false);
 </script>
@@ -15,6 +16,7 @@
   import hljs from "highlight.js";
   import * as db from "../js/db";
   import utils from "../js/utils";
+  import { now } from "svelte/internal";
 
   // 创建一个引用
   let messageContainer;
@@ -22,9 +24,6 @@
   let chatApi = null;
   // 用户当前发送的消息
   let userMsg = "";
-
-  /** 最底部的元素 */
-  let bottomElement;
 
   /** 当前历史记录起始位置 */
   let historyStart = 0;
@@ -43,10 +42,15 @@
 
   $: if (nowConversational) {
     msgs.set(nowConversational.messages);
-    historyStart = nowConversational.contextStart[0];
-    const i = $msgs.length - nowConversational.agent.lst_message_num;
-    if (i >= 0) {
+
+    if (historyStart < nowConversational.contextStart[0]) {
+      historyStart = nowConversational.contextStart[0];
+    }
+    const i = nowConversational.messages.length - nowConversational.agent.lst_message_num;
+    if (i >= 0 && i > nowConversational.contextStart[0]) {
       historyStart = i - 1;
+      nowConversational.contextStart.unshift(historyStart);
+      nowConversational.contextStart.slice(2);
     }
   }
 
@@ -259,6 +263,16 @@
     setTimeout(() => scrollToBottom(), 100);
   });
 
+  eventMgr.on(eventMgr.eventType.CLEAR_DIALOG_HISTORY, () => {
+    if (nowConversational.messages.length === historyStart) {
+      historyStart = nowConversational.contextStart.shift();
+    } else {
+      historyStart = nowConversational.messages.length - 1;
+      nowConversational.contextStart.unshift(historyStart);
+      nowConversational.contextStart.splice(2);
+    }
+  });
+
   /** 修改 */
   async function modify(text, index) {
     const newtext = await utils.openTextareaDialog("修改消息", text);
@@ -273,10 +287,29 @@
   }
 
   /** 删除 */
-  function deleteMsg() {}
+  async function deleteMsg(index) {
+    nowConversational.messages.splice(index, 1);
+    if (nowConversational.messages.length < historyStart) historyStart -= 1;
+    if (historyStart < 0) historyStart = 0;
+    try {
+      await db.updateData(db.storeNames.conversations, nowConversational);
+    } catch (e) {
+      console.error("更新失败!", e);
+    }
+    nowConversational = nowConversational;
+  }
 
   /** 重新回答 */
-  function reAnswer() {}
+  function reAnswer(index) {
+    console.log("reAnswer", index);
+    if (nowConversational.messages[index].role === roleType.assistant) index -= 1;
+    if (index < 0) return;
+    if (nowConversational.messages[index].role === roleType.assistant) return;
+
+    const _msgCont = nowConversational.messages[index].content;
+    nowConversational.messages.splice(index, 2);
+    eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, { message: _msgCont });
+  }
 
   /** 滚动到最底部*/
   function scrollToBottom() {
@@ -311,6 +344,11 @@
 </script>
 
 <main bind:this={messageContainer}>
+  {#if !$msgs || $msgs.length === 0}
+    <div class="item">
+      <div class="content">你好，我是 Mini AI Helper, 很高兴为您解答问题 !</div>
+    </div>
+  {/if}
   {#each $msgs as item, index}
     <div class="item">
       <div class="left photo">
@@ -323,13 +361,15 @@
         {@html mdToHtml(item.content, item.role)}
       </div>
       <div class="left btns" data-index={index}>
-        <button class="iconfont" title="复制" on:click={() => copyContent(item.content)}>&#xe60f;</button>
-        <button class="iconfont" title="修改" on:click={() => modify(item.content, index)}>&#xe60e;</button>
-        <button class="iconfont" title="删除">&#xe657;</button>
-        <button class="iconfont" title="重新回答">&#xe6ff;</button>
+        <button class="iconfont" title="======复制======" on:click={() => copyContent(item.content)}>&#xe60f;</button>
+        <button class="iconfont" title="======修改======" on:click={() => modify(item.content, index)}>&#xe60e;</button>
+        <button class="iconfont" title="======删除======" on:click={() => deleteMsg(index)}>&#xe657;</button>
+        {#if $msgs.length <= index + 2}
+          <button class="iconfont" title="重新回答" on:click={() => reAnswer(index)}>&#xe6ff;</button>
+        {/if}
       </div>
     </div>
-    {#if historyStart > 1 && index === historyStart}
+    {#if historyStart >= 0 && index === historyStart}
       <div class="dividing-line">本次对话，将携带下方所有消息记录</div>
     {/if}
   {/each}
@@ -391,6 +431,9 @@
   .btns {
     position: absolute;
     bottom: -25px;
+    width: 100%;
+    bottom: -30px;
+    padding-top: 5px;
     display: none;
   }
 
@@ -403,6 +446,7 @@
     font-size: 12px;
     padding: 5px 8px;
     margin: 0 !important;
+    border: 1px solid var(--color-border);
   }
 
   .btns.left {

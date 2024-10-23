@@ -178,7 +178,7 @@
       <button on:click={insertFile} class="iconfont" title="插入图片或文件，需要模型支持">&#xe62b;</button>|
       <button on:click={clearHistory} class="iconfont" title="清除历史记录上下文，下次发生信息将不携带历史记录，适当清理可以节省费用!">&#xe6c7;</button>|
       <button on:click={changeModel} class="iconfont" title="修改当前使用的对话模型">&#xe6aa;</button>|
-      <button on:click={showShortcuts} class="iconfont" title="查看键盘快捷键">&#xe663;</button>|
+      <!-- <button on:click={showShortcuts} class="iconfont" title="查看键盘快捷键">&#xe663;</button>| -->
       <button on:click={changeConfig} class="iconfont" title="修改当前配置文件">&#xe86c;</button>|
       {#if files}
         <div class="files">
