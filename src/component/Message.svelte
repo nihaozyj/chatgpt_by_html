@@ -101,19 +101,20 @@
     userMsg = msg;
     sending.set(true);
     const { files } = msg;
-    msg = msg.message.trim();
+    let rmsg = (msg = msg.message.trim());
 
     // 如果msg中包含文件，则需要加工一下内容，文件只显示文件名，内容不显示，图片则使用base64直接内嵌到消息中，可能会特别影响性能，后期可以优化使用图床
     if (files) {
+      console.log("files", files);
       // 文件名列表
       let textFileNames = "";
       // 图片列表
       let imageFileMdTages = "";
       files.forEach((file) => {
         const { type, content, name } = file;
-        if (type === "text") {
+        if (type === "txt") {
           textFileNames += `<span class="file-name">${name}</span> `;
-        } else if (type === "image") {
+        } else if (type === "img") {
           imageFileMdTages += `<img src="${content}" alt="${name}" /> `;
         }
       });
@@ -140,13 +141,16 @@
         let textFileString = "";
         files.forEach((file) => {
           const { type, content, name } = file;
-          if (type === "text") {
+          if (type === "txt") {
             textFileString += `${name}的内容: """${content}""""`;
-          } else if (type === img) {
+          } else if (type === "img") {
             item.content.push({ type: "image_url", image_url: { url: content } });
           }
         });
-        item.content[0].text = `用户上传的文件如下<fileContent>\n${textFileString}\n</fileContent>\n${newMsg.content}`;
+        if (textFileString !== "") {
+          item.content[0].text = `用户上传的文件如下<fileContent>\n${textFileString}\n</fileContent>\n`;
+        }
+        item.content[0].text += rmsg;
         return item;
       })(),
     ];
