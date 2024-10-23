@@ -118,9 +118,20 @@
     setTimeout(() => scrollToBottom());
   });
 
+  function isEvenCodeBlockCount(markdownText) {
+    // 使用正则表达式匹配代码块标记
+    const codeBlockRegex = /```/g;
+    const matches = markdownText.match(codeBlockRegex);
+    // 计算匹配的数量
+    const count = matches ? matches.length : 0;
+    // 返回数量是否为偶数
+    return count % 2 === 0;
+  }
+
   // 处理接口接受到的消息
   async function handleMessage(data, err) {
     if (!$sending) return;
+
     if (err) {
       sending.set(false);
       // 请求失败，取消本次请求
@@ -128,11 +139,18 @@
       // 输出错误信息
       msgs.update((msg) => {
         const lastMsg = msg[msg.length - 1];
-        lastMsg.content += `\`\`\` json\n${err}\`\`\`\n出现错误了，检测到的可能的原因如下：\n`;
-        if (nowConversational.agent.model === "") lastMsg.content += "* 模型未设置\n";
-        if (nowConversational.agent.api_key === "") lastMsg.content += "* API KEY未设置\n";
-        if (nowConversational.agent.base_url === "") lastMsg.content += "* API请求地址未设置\n";
-        lastMsg.content += "* 模型名称对大小写敏感，请检查是否正确设置\n";
+        let errMsg = "";
+
+        if (isEvenCodeBlockCount(lastMsg.content)) {
+          lastMsg.content += `\n<pre><code style="padding: 8px;">${err}</code></pre>\n`;
+        } else {
+          lastMsg.content += `\n\n\`\`\`\n<pre><code style="padding: 8px;">${err}</code></pre>\n`;
+        }
+
+        if (nowConversational.agent.model === "") errMsg += "`[模型未设置]`";
+        if (nowConversational.agent.api_key === "") errMsg += "`[API KEY未设置]`";
+        if (nowConversational.agent.base_url === "") errMsg += "`[API请求地址未设置]`";
+        if (errMsg) lastMsg.content += `出现错误了,可能的原因有：${errMsg}\n`;
         return msg;
       });
 
@@ -167,6 +185,8 @@
       return msg;
     });
   }
+
+  eventMgr.on(eventMgr.eventType.REQUEST_INTERRUPT_DIALOG, () => chatApi && chatApi.cancel());
 
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {
     nowConversational = conversational;

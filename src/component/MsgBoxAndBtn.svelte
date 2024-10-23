@@ -22,14 +22,23 @@
     const newHeight = Math.min(textarea.scrollHeight, 15 * 24);
     textarea.style.height = `${newHeight}px`;
     // 调整 msgbox 的高度
-    msgbox.style.height = `${newHeight + 20}px`; // 20px 是额外的 padding
+    msgbox.style.height = `${newHeight + 20}px`;
   }
 
   function sendMsg() {
+    if ($sending) return; // 正在发送消息，禁止再次发送
     if (message.trim() === "") return;
     eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, message);
     message = "";
     setTimeout(() => adjustHeight());
+  }
+
+  function btnSendMsg() {
+    if ($sending) {
+      eventMgr.emit(eventMgr.eventType.REQUEST_INTERRUPT_DIALOG);
+    } else {
+      sendMsg();
+    }
   }
 
   /** 用户更新设置 */
@@ -89,16 +98,18 @@
     </div>
     <div class="msgbox" bind:this={msgbox}>
       <textarea on:input={adjustHeight} on:keydown={handleKeyDown} bind:value={message} bind:this={textarea} placeholder={'输入问题，"ctrl+enter"发送消息,输入"/"触发命令提示'}></textarea>
-      <button class={`iconfont ${$sending ? "disabled" : ""}`} disabled={$sending}>&#xe60d; 发送</button>
+      <button on:click={btnSendMsg} class="iconfont">
+        {#if $sending}
+          <span class="iconfont rotate">&#xe7c5;</span> 停止
+        {:else}
+          <span class="iconfont">&#xe60d</span> 发送
+        {/if}
+      </button>
     </div>
   </div>
 </main>
 
 <style>
-  .disabled {
-    cursor: not-allowed;
-  }
-
   main {
     height: 92px;
     padding: 10px 0 100px 0;
@@ -150,12 +161,21 @@
   }
 
   .msgbox button {
+    display: flex;
     position: absolute;
+    justify-content: space-between;
+    align-items: center;
+    width: 5em;
     right: 20px;
     bottom: 0.55em;
     border-radius: var(--btn-radius);
     font-weight: bold;
     border: 1px solid var(--color-border);
+  }
+
+  span.rotate {
+    display: block;
+    font-weight: bold;
   }
 
   textarea {

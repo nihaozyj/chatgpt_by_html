@@ -249,18 +249,14 @@ body {
 
 pre {
   position: relative;
-}
-
-pre code {
-  line-height: 1.3em;
-}
-
-pre {
   width: 100%;
+  border-radius: var(--radius);
 }
 
 pre code {
+  line-height: 1.35em;
   background-color: var(--color-code-bg) !important;
+  font-size: 14px;
 }
 
 pre code:not(.hljs) {

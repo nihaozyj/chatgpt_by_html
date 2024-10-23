@@ -33,6 +33,8 @@ const eventType = {
   OPEN_DIALOG: 'openDialog',
   /** 用户点击发送一条消息 */
   SEND_MESSAGE: 'sendMessage',
+  /** 请求中断本次对话 */
+  REQUEST_INTERRUPT_DIALOG: 'requestInterruptDialog',
   /** 设置更新 */
   UPDATE_SETTING: 'updateSetting',
   /** 请求创建一个新的对话 */
