@@ -147,7 +147,7 @@
 
     if (data == null && err == null) {
       msgs.update((msg) => {
-        msg[msg.length - 1].message.trim();
+        msg[msg.length - 1].content.trim();
         return msg;
       });
       // 对话结束，写入数据库
@@ -331,7 +331,8 @@
 
   .dividing-line {
     margin: auto;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
+    margin-top: -20px;
     text-align: center;
     position: relative;
     padding: 0 15px;
