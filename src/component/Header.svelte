@@ -19,6 +19,11 @@
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversation) => {
     title = conversation.title;
   });
+
+  /** 创建一个新的对话 */
+  function createNewDialog() {
+    eventMgr.emit(eventMgr.eventType.REQUEST_CREATE_NEW_DIALOG);
+  }
 </script>
 
 <main>
@@ -27,7 +32,7 @@
   </div>
   <div class="center">{title}</div>
   <div class="right">
-    <button class="iconfont">&#xe69b; 新对话</button>
+    <button class="iconfont" on:click={createNewDialog}>&#xe69b; 新对话</button>
     <button class="iconfont" on:click={toggleTheme}>&#xe614; 主题切换</button>
   </div>
 </main>

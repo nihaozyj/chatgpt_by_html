@@ -147,6 +147,14 @@
       console.error("更新数据库失败");
     }
   }
+
+  /** 创建一个新的对话 */
+  function createNewDialog() {
+    eventMgr.emit(eventMgr.eventType.REQUEST_CREATE_NEW_DIALOG);
+  }
+
+  /** 清空所有历史记录 */
+  async function handleClearAll() {}
 </script>
 
 <main style="width: {width}px;">
@@ -179,8 +187,8 @@
   </div>
   <!-- 操作按钮 -->
   <div class="bottom">
-    <button class="iconfont">&#xe69b; 新对话</button>
-    <button class="iconfont" title="清空所有历史记录">&#xe608;</button>
+    <button class="iconfont" on:click={createNewDialog}>&#xe69b; 新对话</button>
+    <button class="iconfont" title="清空所有历史记录" on:click={handleClearAll}>&#xe608;</button>
   </div>
   <HelperEdit bind:isOpen={$isOpen} title="修改当前对话的智能体配置" on:close={handleClear} bind:agent={nowAgent} isSave={true} />
 </main>
@@ -225,7 +233,7 @@
   }
 
   header .btns button {
-    border: 1px solid var(--color-btn-text);
+    border: 1px solid var(--color-border);
   }
 
   .historys {
@@ -270,8 +278,8 @@
     height: 30px;
     right: 30px;
     background-color: var(--color-bg);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
   }
 
   .btn .btns button {
@@ -280,14 +288,15 @@
   }
 
   .bottom {
-    height: 50px;
+    height: 54px;
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
   }
 
   .bottom button {
-    border: 1px solid var(--color-btn-text);
+    border: 1px solid var(--color-border);
   }
 
   .bottom button:first-child {
