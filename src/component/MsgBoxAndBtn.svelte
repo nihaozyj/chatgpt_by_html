@@ -94,6 +94,26 @@
     adjustHeight();
   }
 
+  function truncateFileName(fileName, maxLength = 8) {
+    if (fileName.length <= maxLength) {
+      return fileName;
+    }
+
+    const charsToShow = Math.floor(maxLength / 2) - 1;
+    const start = fileName.slice(0, charsToShow);
+    const end = fileName.slice(-charsToShow);
+    return `${start}..${end}`;
+  }
+
+  function previewFile(index) {
+    console.log("preview file", index);
+  }
+
+  function removeFile(index) {
+    files.splice(index, 1);
+    files = files;
+  }
+
   init();
 </script>
 
@@ -105,6 +125,16 @@
       <button on:click={changeModel} class="iconfont" title="修改当前使用的对话模型">&#xe6aa;</button>|
       <button on:click={showShortcuts} class="iconfont" title="查看键盘快捷键">&#xe663;</button>|
       <button on:click={changeConfig} class="iconfont" title="修改当前配置文件">&#xe86c;</button>|
+      {#if files}
+        <div class="files">
+          {#each files as file, index}
+            <div>
+              <button on:click={() => previewFile(index)}>{truncateFileName(file.name)}</button>
+              <button on:click={() => removeFile(index)} class="iconfont">&#xe61c;</button>
+            </div>
+          {/each}
+        </div>
+      {/if}
     </div>
     <div class="msgbox" bind:this={msgbox}>
       <textarea on:input={adjustHeight} on:keydown={handleKeyDown} bind:value={message} bind:this={textarea} placeholder={'输入问题，"ctrl+enter"发送消息,输入"/"触发命令提示'}></textarea>
@@ -144,17 +174,40 @@
     width: 100%;
     margin-bottom: -2px;
     background-color: var(--color-bg);
+    display: flex;
   }
 
-  .btns::before {
-    content: "";
-    display: block;
-    position: absolute;
-    width: calc(100% + 16px);
-    height: 1px;
-    top: 0px;
-    right: 0;
-    background-color: var(--color-border);
+  .btns .files {
+    flex-grow: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+    user-select: none;
+    margin-left: 20px;
+  }
+
+  .files div {
+    position: relative;
+    background-color: var(--color-btn-bg);
+    display: inline-block;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+
+  .files div button {
+    background-color: #fff0;
+    font-size: 12px;
+    line-height: 1.5em;
+  }
+
+  .files div button:last-child {
+    width: 1em;
+    padding: 0;
+    margin-left: -15px;
+    font-size: 10px;
+  }
+
+  .btns div::-webkit-scrollbar {
+    height: 0px !important;
   }
 
   .btns button {
