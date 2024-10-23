@@ -40,8 +40,11 @@
 
   async function processFiles() {
     const results = [];
+    const supportedTextTypes = ["text/plain", "text/markdown", "text/javascript", "text/html", "text/css", "application/json"]; // 支持的文本 MIME 类型
+
     for (let file of files) {
       const fileType = file.type.split("/")[0]; // 获取文件类型
+
       if (fileType === "image") {
         // 检查文件大小，假设限制为 3MB
         if (file.size > 3 * 1024 * 1024) {
@@ -49,12 +52,14 @@
         }
         const base64 = await util.convertToBase64(file);
         results.push({ type: "img", content: base64, name: file.name });
-      } else if (fileType === "text") {
+      } else if (fileType === "text" || supportedTextTypes.includes(file.type)) {
+        // 处理支持的文本文件类型
         const textContent = await util.readTextFile(file);
         results.push({ type: "txt", content: textContent, name: file.name });
       }
       // 对于其他类型的文件，不做处理
     }
+    console.log("processFiles", results);
     return results;
   }
 </script>

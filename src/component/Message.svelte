@@ -23,6 +23,9 @@
   // 用户当前发送的消息
   let userMsg = "";
 
+  /** 最底部的元素 */
+  let bottomElement;
+
   /** 当前历史记录起始位置 */
   let historyStart = 0;
 
@@ -71,9 +74,9 @@
     if (role === roleType.user) {
       const text = splitText(md);
       if (text[1]) {
-        return text[0] + escapeHtml(text[1]).trim();
+        return text[0] + escapeHtml(text[1].trim());
       } else {
-        return escapeHtml(md).trim();
+        return escapeHtml(text[0].trim()).trim();
       }
     } else {
       // 使用 marked 解析 Markdown
@@ -152,10 +155,10 @@
         let textFileString = "";
         files.forEach((file) => {
           const { type, content, name } = file;
-          if (type === "txt") {
-            textFileString += `${name}的内容: """${content}""""`;
-          } else if (type === "img") {
+          if (type === "img") {
             item.content.push({ type: "image_url", image_url: { url: content } });
+          } else {
+            textFileString += `${name}的内容: """${content}""""`;
           }
         });
         if (textFileString !== "") {
@@ -231,6 +234,7 @@
       });
       // 对话结束，写入数据库
       nowConversational.messages = $msgs;
+      setTimeout(() => hljs.highlightAll());
       try {
         await db.updateData(db.storeNames.conversations, nowConversational);
       } catch (e) {
@@ -251,14 +255,9 @@
 
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {
     nowConversational = conversational;
-    setTimeout(() => {
-      scrollToBottom();
-      hljs.highlightAll();
-    });
+    setTimeout(() => hljs.highlightAll());
+    setTimeout(() => scrollToBottom(), 100);
   });
-
-  /** 朗读 */
-  function read() {}
 
   /** 修改 */
   async function modify(text, index) {
@@ -287,12 +286,6 @@
   afterUpdate(() => {
     const distanceFromBottom = messageContainer.scrollHeight - messageContainer.scrollTop - messageContainer.clientHeight;
     if (distanceFromBottom < 100) scrollToBottom();
-
-    const codeBlocks = messageContainer.querySelectorAll("pre code");
-    if (codeBlocks.length > 0) {
-      const lastCodeBlock = codeBlocks[codeBlocks.length - 1];
-      hljs.highlightElement(lastCodeBlock);
-    }
   });
 
   function copyContent(content) {
@@ -326,7 +319,9 @@
         </span>
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
-      <div class="content">{@html mdToHtml(item.content, item.role)}</div>
+      <div class="content">
+        {@html mdToHtml(item.content, item.role)}
+      </div>
       <div class="left btns" data-index={index}>
         <button class="iconfont" title="复制" on:click={() => copyContent(item.content)}>&#xe60f;</button>
         <button class="iconfont" title="修改" on:click={() => modify(item.content, index)}>&#xe60e;</button>
@@ -383,7 +378,7 @@
   }
 
   .item:last-child {
-    margin-bottom: 20px;
+    margin-bottom: 60px;
   }
 
   .content {

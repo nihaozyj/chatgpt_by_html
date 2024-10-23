@@ -259,6 +259,8 @@ pre code {
   line-height: 1.35em;
   background-color: var(--color-code-bg) !important;
   font-size: 14px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 pre code:not(.hljs) {
@@ -384,4 +386,65 @@ button.copy-btn {
   color: var(--color-tip-text);
   background-color: var(--color-bg);
   border-radius: var(--radius);
+}
+
+.item .content {
+  font-size: 14px;
+  line-height: 1.4em;
+}
+
+.item .content ol,
+.item .content ul {
+  margin-left: 40px;
+}
+
+.item .content h1,
+.item .content h2 {
+  margin: 1em 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+
+.item .content h3,
+.item .content h4,
+.item .content h5,
+.item .content h6 {
+  margin: 0.5em 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* 设置全局表格样式 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  /* 合并边框 */
+  margin: 20px 0;
+  /* 上下外边距 */
+  background-color: var(--color-chat-bubble-bg);
+  /* 表格背景颜色 */
+  color: #ffffff;
+  /* 字体颜色 */
+}
+
+th,
+td {
+  padding: 15px;
+  /* 内边距 */
+  text-align: left;
+  /* 左对齐 */
+  border: 1px solid #333;
+  /* 边框颜色 */
+}
+
+thead {
+  background-color: #1e1e1e;
+  /* 表头背景颜色 */
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-code-bg);
+  /* 偶数行背景颜色 */
 }
