@@ -119,12 +119,24 @@
         }
       });
       // 组装消息, 由于用户的消息不会解析为hhtml，因此此处使用[-cross-line-]作为分隔符
-      msg = `<div class="file-container">${textFileNames} ${imageFileMdTages}</div>[<><>cross-line<><>]` + msg;
+      if (textFileNames.trim() !== "" || imageFileMdTages.trim() !== "") {
+        msg = `<div class="file-container">${textFileNames} ${imageFileMdTages}</div>[<><>cross-line<><>]` + msg;
+      }
     }
     const newMsg = new Con.Message(roleType.user, msg, Date.now());
     const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
     const index = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, historyStart);
     const history = JSON.parse(JSON.stringify($msgs)).splice(index, nowConversational.agent.lst_message_num, historyStart);
+    // 用户的历史记录中携带着图片的base64内容，需要将其删除，图片识别只在当前回合的对话中有效
+    for (let i = 0; i < history.length; i++) {
+      if (history[i].role === roleType.user) {
+        // 判断是否有打上标记的图片和文本信息，有的话删除掉
+        const spCont = splitText(history[i].content);
+        if (spCont[1]) {
+          history[i].content = spCont[1];
+        }
+      }
+    }
     nowConversational.messages = [...nowConversational.messages, newMsg, resMsg];
     chatApi = createChatApi();
     const { agent } = nowConversational;
@@ -132,7 +144,6 @@
     const messages = [
       { role: roleType.system, content: agent.setting },
       ...history,
-
       (() => {
         // 用户消息中不存在文件时
         if (!files) return { role: newMsg.role, content: newMsg.content };

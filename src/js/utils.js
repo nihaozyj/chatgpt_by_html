@@ -101,8 +101,102 @@ async function openTextareaDialog(title, message) {
   });
 }
 
+/**
+ * 将文件转换为 Base64 编码的 Data URL。
+ * @param {File} file - 要转换的文件对象。
+ * @returns {Promise<string>} - 返回一个 Promise，解析为 Base64 编码的 Data URL。
+ */
+function convertToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file); // 将文件读取为 Data URL
+  });
+}
+
+/**
+ * 读取文本文件并返回其内容。
+ * @param {File} file - 要读取的文本文件对象。
+ * @returns {Promise<string>} - 返回一个 Promise，解析为文件的文本内容。
+ */
+function readTextFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsText(file); // 将文件读取为文本
+  });
+}
+
+/**
+ * 压缩图像文件到指定的最大宽度和高度。
+ * @param {File} file - 要压缩的图像文件对象。
+ * @param {number} [maxWidth=1280] - 压缩后的最大宽度，默认为 1280 像素。
+ * @param {number} [maxHeight=720] - 压缩后的最大高度，默认为 720 像素。
+ * @returns {Promise<File>} - 返回一个 Promise，解析为压缩后的图像文件。
+ */
+async function compressImage(file, maxWidth = 1280, maxHeight = 720) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      img.src = event.target.result;
+    };
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      // 计算压缩后的宽高
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      // 绘制图像到 canvas
+      ctx.drawImage(img, 0, 0, width, height);
+      // 将 canvas 转换为 Blob
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, { type: file.type })); // 返回压缩后的文件
+          } else {
+            reject(new Error("压缩失败"));
+          }
+        },
+        file.type,
+        0.7,
+      ); // 0.7 是压缩质量，范围 0-1
+    };
+
+    img.onerror = (error) => {
+      reject(error);
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(file); // 读取文件为 Data URL
+  });
+}
+
+
 export default {
   openInputDialog,
   openSelectDialog,
-  openTextareaDialog
+  openTextareaDialog,
+  convertToBase64,
+  readTextFile,
+  compressImage
 };

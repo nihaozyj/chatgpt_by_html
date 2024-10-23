@@ -35,7 +35,7 @@ class Agent {
    * 对话模型
    * @type {keyof typeof modelList}
    */
-  model = null;
+  model = modelList[1];
 
   /**
    * 自定义模型列表
@@ -68,9 +68,9 @@ class Agent {
   api_key = "";
 
   /**
-   * 接口地址，格式为`http(s)://{接口地址}/v1`,默认为`http://api.openai.com/v1`
+   * 接口地址，格式为`http(s)://接口地址``
    */
-  base_url = "http://api.openai.com/v1";
+  base_url = "";
 
   /**
    * 创建一个智能体实例
