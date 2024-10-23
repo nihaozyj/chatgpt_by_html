@@ -363,6 +363,7 @@
   .item .content {
     white-space: pre-wrap;
     overflow-wrap: break-word;
+    min-height: 19.59px;
   }
 
   .photo {
