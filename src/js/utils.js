@@ -191,6 +191,45 @@ async function compressImage(file, maxWidth = 1280, maxHeight = 720) {
   });
 }
 
+/**
+ * 打开一个弹窗，查看图片。
+ * @param {string} title - 弹窗标题（文件名）。
+ * @param {string} base64Image - Base64 编码的图片。
+ * @returns {Promise<void>} - 返回一个 Promise，表示弹窗的关闭。
+ */
+async function openImageDialog(title, base64Image) {
+  const id = `modal-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+  const template = `
+    <div class="modal fadeIn" id="${id}">
+      <div class="modal-content image-viewer">
+        <div class="header">
+          <button data-tyle="close">关闭</button>
+          <h2>${title}</h2>
+        </div>
+        <img src="${base64Image}" alt="${title}" style="max-width: 100%; max-height: 80vh;" />
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', template);
+
+  return new Promise(resolve => {
+    const modal = document.querySelector(`#${id}`);
+    const closeBtn = modal.querySelector('[data-tyle="close"]');
+
+    const close = () => {
+      modal.classList.remove('fadeIn');
+      modal.classList.add('fadeOut');
+      setTimeout(() => {
+        modal.remove();
+        resolve();
+      }, 300);
+    };
+
+    closeBtn.addEventListener('click', close);
+  });
+}
+
 
 export default {
   openInputDialog,
@@ -198,5 +237,6 @@ export default {
   openTextareaDialog,
   convertToBase64,
   readTextFile,
-  compressImage
+  compressImage,
+  openImageDialog
 };

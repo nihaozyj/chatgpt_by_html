@@ -1,6 +1,7 @@
 <script>
   import configProxy from "../js/config";
   import eventMgr from "../js/eventMgr";
+  import utils from "../js/utils";
   import FileUnload from "./FileUnload.svelte";
   import { sending } from "./Message.svelte";
 
@@ -106,12 +107,66 @@
   }
 
   function previewFile(index) {
-    console.log("preview file", index);
+    if (files[index].type === "txt") {
+      utils.openTextareaDialog(files[index].name, files[index].content);
+    } else {
+      utils.openImageDialog(files[index].name, files[index].content);
+    }
   }
 
   function removeFile(index) {
     files.splice(index, 1);
     files = files;
+  }
+
+  function handlePaste(event) {
+    const items = (event.clipboardData || window.clipboardData).items;
+    console.log("handlePaste", items[0].kind);
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (file) {
+          // 处理文件上传
+          handleFileUpload(file);
+        }
+      }
+    }
+  }
+
+  async function processFiles(fls) {
+    const results = [];
+    const supportedTextTypes = ["text/plain", "text/markdown", "text/javascript", "text/html", "text/css", "application/json"]; // 支持的文本 MIME 类型
+
+    for (let file of fls) {
+      const fileType = file.type.split("/")[0]; // 获取文件类型
+      const extension = file.name.split(".").pop().toLowerCase();
+
+      if (fileType === "image") {
+        // 检查文件大小，假设限制为 3MB
+        if (file.size > 3 * 1024 * 1024) {
+          file = await utils.compressImage(file); // 压缩文件
+        }
+        const base64 = await utils.convertToBase64(file);
+        results.push({ type: "img", content: base64, name: file.name });
+      } else if (fileType === "text" || supportedTextTypes.includes(file.type) || extension === "md") {
+        // 处理支持的文本文件类型
+        const textContent = await utils.readTextFile(file);
+        results.push({ type: "txt", content: textContent, name: file.name });
+      }
+      // 对于其他类型的文件，不做处理
+    }
+    console.log("processFiles", results);
+    return results;
+  }
+
+  async function handleFileUpload(file) {
+    // 这里可以调用文件上传组件的处理逻辑
+    const result = await processFiles([file]); // 处理单个文件
+    const _fs = [...result, ...(files || [])];
+    // 文件去重
+    const _fls = _fs.filter((f, i) => _fs.findIndex((f2) => f2.name === f.name) === i);
+    files = _fls; // 更新文件列表
   }
 
   init();
@@ -137,7 +192,7 @@
       {/if}
     </div>
     <div class="msgbox" bind:this={msgbox}>
-      <textarea on:input={adjustHeight} on:keydown={handleKeyDown} bind:value={message} bind:this={textarea} placeholder={'输入问题，"ctrl+enter"发送消息,输入"/"触发命令提示'}></textarea>
+      <textarea on:paste={handlePaste} on:input={adjustHeight} on:keydown={handleKeyDown} bind:value={message} bind:this={textarea} placeholder={'输入问题，"ctrl+enter"发送消息,输入"/"触发命令提示'}></textarea>
       <button on:click={btnSendMsg} class="iconfont">
         {#if $sending}
           <span class="iconfont rotate">&#xe7c5;</span> 停止

@@ -44,6 +44,7 @@
 
     for (let file of files) {
       const fileType = file.type.split("/")[0]; // 获取文件类型
+      const extension = file.name.split(".").pop().toLowerCase();
 
       if (fileType === "image") {
         // 检查文件大小，假设限制为 3MB
@@ -52,7 +53,7 @@
         }
         const base64 = await util.convertToBase64(file);
         results.push({ type: "img", content: base64, name: file.name });
-      } else if (fileType === "text" || supportedTextTypes.includes(file.type)) {
+      } else if (fileType === "text" || supportedTextTypes.includes(file.type) || extension === "md") {
         // 处理支持的文本文件类型
         const textContent = await util.readTextFile(file);
         results.push({ type: "txt", content: textContent, name: file.name });
