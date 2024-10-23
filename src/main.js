@@ -4,6 +4,8 @@ import * as db from './js/db.js';
 
 db.initDB();
 
+// console.log = function () { };
+
 const app = new App({
 	target: document.body,
 });

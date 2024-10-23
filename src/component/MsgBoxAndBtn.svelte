@@ -1,25 +1,32 @@
 <script>
   import configProxy from "../js/config";
   import eventMgr from "../js/eventMgr";
+  import FileUnload from "./FileUnload.svelte";
   import { sending } from "./Message.svelte";
 
   let textarea;
   let msgbox;
   let message;
   let files;
+  let fileboxIsOpen = false;
 
   let sendKey;
 
   function init() {
     message = "";
-    files = [];
+    files = null;
     sendKey = configProxy.sendMsgKey;
+  }
+
+  function handleFileUploadResult(result) {
+    fileboxIsOpen = false;
+    files = result.detail;
   }
 
   function adjustHeight() {
     textarea.style.height = "34px";
     // 计算新的高度
-    const newHeight = Math.min(textarea.scrollHeight, 15 * 24);
+    const newHeight = Math.min(textarea.scrollHeight, 10 * 24);
     textarea.style.height = `${newHeight}px`;
     // 调整 msgbox 的高度
     msgbox.style.height = `${newHeight + 20}px`;
@@ -28,9 +35,10 @@
   function sendMsg() {
     if ($sending) return; // 正在发送消息，禁止再次发送
     if (message.trim() === "") return;
-    eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, message);
+    eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, { message, files });
     message = "";
     setTimeout(() => adjustHeight());
+    files = null;
   }
 
   function btnSendMsg() {
@@ -47,7 +55,9 @@
   });
 
   /** 插入文件或者图片*/
-  function insertFile() {}
+  function insertFile() {
+    fileboxIsOpen = true;
+  }
   /** 清除历史记录上下文 */
   function clearHistory() {
     eventMgr.emit(eventMgr.eventType.CLEAR_DIALOG_HISTORY);
@@ -107,6 +117,9 @@
       </button>
     </div>
   </div>
+  {#if fileboxIsOpen}
+    <FileUnload on:close={() => (fileboxIsOpen = false)} on:file-upload-result={handleFileUploadResult} />
+  {/if}
 </main>
 
 <style>

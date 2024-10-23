@@ -27,6 +27,8 @@ body.dark {
   --color-highlight-text: #519dbb;
   /** 强调文字背景色 */
   --color-highlight-bg: #3e4ea8;
+  /** 提示文字颜色 **/
+  --color-tip-text: #858585;
 
   /** 按钮文字颜色 */
   --color-btn-text: #3666af;
@@ -313,6 +315,7 @@ button.copy-btn {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-bottom: 10px;
   margin-bottom: 20px;
   border-bottom: 1px solid var(--color-border);

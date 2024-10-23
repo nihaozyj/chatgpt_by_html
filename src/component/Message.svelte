@@ -54,9 +54,27 @@
     return div.innerHTML;
   }
 
+  function splitText(text) {
+    const delimiter = "[<><>cross-line<><>]";
+    const index = text.indexOf(delimiter);
+
+    if (index !== -1) {
+      const part1 = text.substring(0, index);
+      const part2 = text.substring(index + delimiter.length);
+      return [part1, part2];
+    } else {
+      return [text, null];
+    }
+  }
+
   function mdToHtml(md, role) {
     if (role === roleType.user) {
-      return escapeHtml(md).trim();
+      const text = splitText(md);
+      if (text[1]) {
+        return text[0] + escapeHtml(text[1]).trim();
+      } else {
+        return escapeHtml(md).trim();
+      }
     } else {
       // 使用 marked 解析 Markdown
       const html = marked(md).trim();
@@ -82,27 +100,55 @@
   eventMgr.on(eventMgr.eventType.SEND_MESSAGE, function (msg) {
     userMsg = msg;
     sending.set(true);
+    const { files } = msg;
+    msg = msg.message.trim();
 
+    // 如果msg中包含文件，则需要加工一下内容，文件只显示文件名，内容不显示，图片则使用base64直接内嵌到消息中，可能会特别影响性能，后期可以优化使用图床
+    if (files) {
+      // 文件名列表
+      let textFileNames = "";
+      // 图片列表
+      let imageFileMdTages = "";
+      files.forEach((file) => {
+        const { type, content, name } = file;
+        if (type === "text") {
+          textFileNames += `<span class="file-name">${name}</span> `;
+        } else if (type === "image") {
+          imageFileMdTages += `<img src="${content}" alt="${name}" /> `;
+        }
+      });
+      // 组装消息, 由于用户的消息不会解析为hhtml，因此此处使用[-cross-line-]作为分隔符
+      msg = `<div class="file-container">${textFileNames} ${imageFileMdTages}</div>[<><>cross-line<><>]` + msg;
+    }
     const newMsg = new Con.Message(roleType.user, msg, Date.now());
     const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
     const index = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, historyStart);
     const history = JSON.parse(JSON.stringify($msgs)).splice(index, nowConversational.agent.lst_message_num, historyStart);
-    console.log(history);
-
     nowConversational.messages = [...nowConversational.messages, newMsg, resMsg];
     chatApi = createChatApi();
-    const { agent, contextStart } = nowConversational;
+    const { agent } = nowConversational;
     // 消息格式化
     const messages = [
-      {
-        role: roleType.system,
-        content: agent.setting,
-      },
+      { role: roleType.system, content: agent.setting },
       ...history,
-      {
-        role: newMsg.role,
-        content: newMsg.content,
-      },
+
+      (() => {
+        // 用户消息中不存在文件时
+        if (!files) return { role: newMsg.role, content: newMsg.content };
+        // 用户消息中存在文件时，将文件内容添加到消息中,此处文本直接拼接
+        const item = { role: roleType.user, content: [{ type: "text", text: "" }] };
+        let textFileString = "";
+        files.forEach((file) => {
+          const { type, content, name } = file;
+          if (type === "text") {
+            textFileString += `${name}的内容: """${content}""""`;
+          } else if (type === img) {
+            item.content.push({ type: "image_url", image_url: { url: content } });
+          }
+        });
+        item.content[0].text = `用户上传的文件如下<fileContent>\n${textFileString}\n</fileContent>\n${newMsg.content}`;
+        return item;
+      })(),
     ];
     // 组建请求体
     const body = {
@@ -190,7 +236,10 @@
 
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversational) => {
     nowConversational = conversational;
-    setTimeout(() => scrollToBottom());
+    setTimeout(() => {
+      scrollToBottom();
+      hljs.highlightAll();
+    });
   });
 
   /** 朗读 */
@@ -222,7 +271,7 @@
 
   afterUpdate(() => {
     const distanceFromBottom = messageContainer.scrollHeight - messageContainer.scrollTop - messageContainer.clientHeight;
-    if (distanceFromBottom < 150) scrollToBottom();
+    if (distanceFromBottom < 100) scrollToBottom();
 
     const codeBlocks = messageContainer.querySelectorAll("pre code");
     if (codeBlocks.length > 0) {

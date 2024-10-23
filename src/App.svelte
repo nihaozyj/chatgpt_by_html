@@ -7,7 +7,7 @@
 	import Setting from "./component/Setting.svelte";
 	import Agents from "./component/Agents.svelte";
 	import eventMgr from "./js/eventMgr";
-	// import ResizableModal from "./js/ResizableModal.js";
+	import FileUnload from "./component/FileUnload.svelte";
 	import { writable } from "svelte/store";
 
 	export const settingIsOpen = writable(false);
