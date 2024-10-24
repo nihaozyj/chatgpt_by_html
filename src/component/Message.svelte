@@ -46,15 +46,9 @@
   $: if (nowConversational) {
     msgs.set(nowConversational.messages);
 
-    if (historyStart < nowConversational.contextStart[0]) {
-      historyStart = nowConversational.contextStart[0];
-    }
-    const i = nowConversational.messages.length - nowConversational.agent.lst_message_num;
-    if (i >= 0 && i > nowConversational.contextStart[0]) {
-      historyStart = i - 1;
-      nowConversational.contextStart.unshift(historyStart);
-      nowConversational.contextStart.slice(2);
-    }
+    const nowIndex = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, 0);
+    const tagIndex = nowConversational.contextStart[0];
+    historyStart = Math.max(tagIndex, nowIndex);
   }
 
   function escapeHtml(html) {
@@ -136,8 +130,9 @@
     }
     const newMsg = new Con.Message(roleType.user, msg, Date.now());
     const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
-    const index = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, historyStart);
-    const history = JSON.parse(JSON.stringify($msgs)).splice(index, nowConversational.agent.lst_message_num, historyStart);
+    const nowIndex = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, 0);
+    const tagIndex = nowConversational.contextStart[0];
+    const history = JSON.parse(JSON.stringify($msgs)).splice(Math.max(tagIndex, nowIndex));
     // 用户的历史记录中携带着图片的base64内容，需要将其删除，图片识别只在当前回合的对话中有效
     for (let i = 0; i < history.length; i++) {
       if (history[i].role === roleType.user) {
@@ -381,7 +376,7 @@
         {/if}
       </div>
     </div>
-    {#if historyStart >= 0 && index === historyStart}
+    {#if historyStart != 0 && index + 1 === historyStart}
       <div class="dividing-line">本次对话，将携带下方所有消息记录</div>
     {/if}
   {/each}
