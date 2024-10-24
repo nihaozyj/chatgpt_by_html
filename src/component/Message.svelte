@@ -28,6 +28,9 @@
   /** 当前历史记录起始位置 */
   let historyStart = 0;
 
+  let isUserScrolling = false; // 标记用户是否在手动滚动
+  let lastScrollTop = 0; // 记录上次的滚动位置
+
   /**
    * 当前对话
    * @type {Con.Conversational}
@@ -105,6 +108,7 @@
   }
 
   eventMgr.on(eventMgr.eventType.SEND_MESSAGE, function (msg) {
+    isUserScrolling = false;
     userMsg = msg;
     sending.set(true);
     const { files } = msg;
@@ -313,12 +317,14 @@
 
   /** 滚动到最底部*/
   function scrollToBottom() {
-    messageContainer.scrollTop = messageContainer.scrollHeight;
+    if (!isUserScrolling) {
+      // 只有当用户没有手动滚动时才滚动到底部
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
   }
 
   afterUpdate(() => {
-    const distanceFromBottom = messageContainer.scrollHeight - messageContainer.scrollTop - messageContainer.clientHeight;
-    if (distanceFromBottom < 100) scrollToBottom();
+    setTimeout(() => scrollToBottom());
   });
 
   function copyContent(content) {
@@ -339,6 +345,12 @@
         const codeBlock = target.parentNode.querySelector("code");
         copyContent(codeBlock.textContent);
       }
+    });
+    // 监听滚动事件
+    messageContainer.addEventListener("scroll", () => {
+      const scrollTop = messageContainer.scrollTop;
+      isUserScrolling = scrollTop < lastScrollTop; // 如果当前滚动位置小于上次位置，表示用户正在向上滚动
+      lastScrollTop = scrollTop; // 更新上次滚动位置
     });
   });
 </script>
