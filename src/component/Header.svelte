@@ -28,7 +28,7 @@
 
 <main>
   <div class="left">
-    <button class="iconfont">&#xe605;</button>
+    <button class="iconfont" on:click={() => eventMgr.emit(eventMgr.eventType.TOGGLE_SIDEBAR)}>&#xe605;</button>
   </div>
   <div class="center">{title}</div>
   <div class="right">

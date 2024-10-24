@@ -6,7 +6,9 @@
   import { onMount } from "svelte";
   import { modelList } from "../js/agent.js";
   import { writable } from "svelte/store";
+
   export let width;
+  export let isLeftHide = true;
 
   let conversations = [];
   let nowConvasationId = 0;
@@ -157,7 +159,7 @@
   async function handleClearAll() {}
 </script>
 
-<main style="width: {width}px;">
+<main style="width: {width}px;" class:hide={!isLeftHide}>
   <!-- 头部 Logo 和操作按钮 -->
   <header>
     <h1>Mini Helper</h1>
@@ -194,6 +196,10 @@
 </main>
 
 <style>
+  .hide {
+    display: none;
+  }
+
   .active {
     background: linear-gradient(to right, var(--color-highlight-bg), var(--color-bg) 85%);
     border-radius: var(--radius);

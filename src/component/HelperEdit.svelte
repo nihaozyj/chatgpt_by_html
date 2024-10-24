@@ -124,7 +124,7 @@
             </div>
             <div class="item">
               <span>请求地址(baseurl)</span>
-              <input bind:value={agent.base_url} type="text" placeholder="默认为:https://api.openai-up.com/v1" />
+              <input bind:value={agent.base_url} type="text" placeholder="示例:https://api.openai.com" />
             </div>
             <div class="item">
               <span>请求密钥(apikey)</span>

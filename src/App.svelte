@@ -9,11 +9,14 @@
 	import eventMgr from "./js/eventMgr";
 	import FileUnload from "./component/FileUnload.svelte";
 	import { writable } from "svelte/store";
+	import { onMount } from "svelte";
 
 	export const settingIsOpen = writable(false);
 	export const agentsIsOpen = writable(false);
 
 	let leftWidth = config.sidebarWidth;
+
+	let isLeftHide = config.sidebarHidden;
 
 	// 弹出层参数
 	let { on, eventType: type } = eventMgr;
@@ -38,11 +41,23 @@
 	on(type.OPEN_AGENT_LIST, () => {
 		agentsIsOpen.set(true);
 	});
+
+	eventMgr.on(type.TOGGLE_SIDEBAR, (data) => {
+		config.sidebarHidden = isLeftHide = !isLeftHide;
+	});
+
+	onMount(() => {
+		document.body.addEventListener("keydown", (e) => {
+			if (e.ctrlKey && e.key === "b") {
+				eventMgr.emit(type.TOGGLE_SIDEBAR);
+			}
+		});
+	});
 </script>
 
 <main>
-	<Historys width={leftWidth} />
-	<div class="resizer" on:mousedown={startDrag}></div>
+	<Historys width={leftWidth} bind:isLeftHide />
+	<div class={`resizer ${!isLeftHide ? "hide" : ""}`} on:mousedown={startDrag}></div>
 	<div class="right">
 		<Header />
 		<Message />
@@ -80,5 +95,9 @@
 		flex-direction: column;
 		justify-content: space-between;
 		width: 0;
+	}
+
+	.hide {
+		display: none;
 	}
 </style>

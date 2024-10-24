@@ -47,6 +47,8 @@ const eventType = {
   CLEAR_DIALOG_HISTORY: 'clearDialogHistory',
   /** 对话更新 */
   DIALOG_UPDATE: 'dialogUpdate',
+  /** 显示或者隐藏侧栏 */
+  TOGGLE_SIDEBAR: 'toggleSidebar',
 };
 
 
