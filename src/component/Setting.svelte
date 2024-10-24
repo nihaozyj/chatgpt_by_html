@@ -249,10 +249,6 @@
     color: var(--color-text);
   }
 
-  .hide {
-    display: none;
-  }
-
   .popups-setting {
     position: absolute;
     width: 100%;

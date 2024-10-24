@@ -196,10 +196,6 @@
 </main>
 
 <style>
-  .hide {
-    display: none;
-  }
-
   .active {
     background: linear-gradient(to right, var(--color-highlight-bg), var(--color-bg) 85%);
     border-radius: var(--radius);

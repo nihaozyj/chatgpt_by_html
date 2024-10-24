@@ -1,4 +1,5 @@
 <script context="module">
+  import Historys from "./Historys.svelte";
   import Message from "./Message.svelte";
   /** 当前消息状态，为真说明消息发送中，禁止再次发送消息，为假说明可以发送消息 */
   export const sending = writable(false);
@@ -130,9 +131,10 @@
     }
     const newMsg = new Con.Message(roleType.user, msg, Date.now());
     const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
-    const nowIndex = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, 0);
-    const tagIndex = nowConversational.contextStart[0];
-    const history = JSON.parse(JSON.stringify($msgs)).splice(Math.max(tagIndex, nowIndex));
+
+    const maxHL = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, nowConversational.contextStart[0]);
+    const history = JSON.parse(JSON.stringify(nowConversational.messages)).splice(maxHL);
+
     // 用户的历史记录中携带着图片的base64内容，需要将其删除，图片识别只在当前回合的对话中有效
     for (let i = 0; i < history.length; i++) {
       if (history[i].role === roleType.user) {
@@ -263,10 +265,12 @@
   });
 
   eventMgr.on(eventMgr.eventType.CLEAR_DIALOG_HISTORY, () => {
-    if (nowConversational.messages.length === historyStart) {
-      historyStart = nowConversational.contextStart.shift();
+    const lastIndex = nowConversational.contextStart[0];
+    if (lastIndex === nowConversational.messages.length) {
+      const index = nowConversational.contextStart.shift();
+      historyStart = index;
     } else {
-      historyStart = nowConversational.messages.length - 1;
+      historyStart = nowConversational.messages.length;
       nowConversational.contextStart.unshift(historyStart);
       nowConversational.contextStart.splice(2);
     }
@@ -357,6 +361,9 @@
     </div>
   {/if}
   {#each $msgs as item, index}
+    {#if historyStart != 0 && index === historyStart}
+      <div class="dividing-line">本次对话，将携带下方所有消息记录</div>
+    {/if}
     <div class="item">
       <div class="left photo">
         <span class="iconfont">
@@ -376,9 +383,6 @@
         {/if}
       </div>
     </div>
-    {#if historyStart != 0 && index + 1 === historyStart}
-      <div class="dividing-line">本次对话，将携带下方所有消息记录</div>
-    {/if}
   {/each}
 </main>
 

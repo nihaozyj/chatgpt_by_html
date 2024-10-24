@@ -96,8 +96,4 @@
 		justify-content: space-between;
 		width: 0;
 	}
-
-	.hide {
-		display: none;
-	}
 </style>
