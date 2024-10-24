@@ -192,7 +192,7 @@
 
   .popups-setting textarea {
     resize: none;
-    max-height: calc(1.5em * 3);
+    max-height: calc(1.5em * 6);
   }
 
   .popups-setting > .content {

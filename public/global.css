@@ -76,22 +76,22 @@ body.dark {
 
 body.light {
   /** 背景色 */
-  --color-bg: #f5f5f5;
+  --color-bg: #e1dfdd;
   /** 边框颜色 */
-  --color-border: #dcdcdc;
+  --color-border: #c8c6c4;
   /** 文字颜色 */
-  --color-text: #333333;
+  --color-text: #201f1e;
   /** 次要内容的文字颜色 */
-  --color-secondary-text: #2f6b5f;
+  --color-secondary-text: #002050;
   /** 警告文字颜色 */
   --color-warn-text: #a72126;
   /** 强调文字颜色 */
-  --color-highlight-text: #2a6f8c;
+  --color-highlight-text: #0078d4;
   /** 强调文字背景色 */
-  --color-highlight-bg: #d0e1ff;
+  --color-highlight-bg: #008272;
 
   /** 按钮文字颜色 */
-  --color-btn-text: #2a5b8c;
+  --color-btn-text: #0078d4;
   /** 按钮背景色 */
   --color-btn-bg: #e0e0e0;
   /** 禁止点击背景色 */
@@ -124,7 +124,7 @@ body.light {
   --color-logo-bg: #b0d4ff;
 
   /** 聊天背景气泡背景色 */
-  --color-chat-bubble-bg: #e8f0f8;
+  --color-chat-bubble-bg: #d2d0ce;
 
   /** 圆角大小 */
   --radius: 5px;
