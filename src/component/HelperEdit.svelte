@@ -166,12 +166,13 @@
     min-width: 850px;
     min-height: 500px;
     overflow: auto;
+    font-size: 1.5em;
   }
 
   .popups-setting * {
     background-color: var(--color-bg);
     color: var(--color-text);
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .popups-setting select,
@@ -214,7 +215,7 @@
   #setting-form > .header > button {
     border: 1px solid var(--color-border);
     padding: 5px 15px;
-    font-size: 16px;
+    font-size: 1em;
     color: var(--color-btn-text);
   }
 

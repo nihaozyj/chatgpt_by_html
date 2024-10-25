@@ -216,7 +216,7 @@
   }
 
   header h1 {
-    font-size: 22px;
+    font-size: 1.375em;
     width: 100%;
     height: 60px;
     line-height: 60px;
@@ -236,6 +236,7 @@
 
   header .btns button {
     border: 1px solid var(--color-border);
+    font-size: 1em;
   }
 
   .historys {
@@ -248,15 +249,15 @@
   .historys .item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: 1em;
+    font-size: 0.875em;
     padding: 5px 0;
     padding-left: 5px;
   }
 
   .item h2 {
     flex-grow: 1;
-    font-size: 14px;
+    font-size: 0.875em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -273,11 +274,15 @@
     margin-right: 2px;
   }
 
+  .item .btn button {
+    font-size: 1em;
+  }
+
   .btn .btns {
     position: absolute;
     bottom: 0;
-    width: 98px;
-    height: 30px;
+    width: calc(4em + 30px);
+    height: calc(1.3em + 10px);
     right: 30px;
     background-color: var(--color-bg);
     border: 1px solid var(--color-border);
@@ -285,7 +290,7 @@
   }
 
   .btn .btns button {
-    font-size: 14px;
+    font-size: 0.875em;
     padding: 5px;
   }
 
@@ -293,12 +298,13 @@
     height: 54px;
     display: flex;
     justify-content: space-between;
-    padding-top: 20px;
+    padding-top: calc(54px - 2.5em);
     border-top: 1px solid var(--color-border);
   }
 
   .bottom button {
     border: 1px solid var(--color-border);
+    font-size: 1em;
   }
 
   .bottom button:first-child {

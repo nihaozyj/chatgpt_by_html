@@ -267,7 +267,7 @@
 
   .files div button {
     background-color: #fff0;
-    font-size: 12px;
+    font-size: 0.75em;
     line-height: 1.5em;
   }
 
@@ -275,7 +275,7 @@
     width: 1em;
     padding: 0;
     margin-left: -15px;
-    font-size: 10px;
+    font-size: 0.625em;
   }
 
   .btns div::-webkit-scrollbar {
@@ -286,12 +286,13 @@
     padding: 3px 8px;
     border-radius: var(--btn-radius-small);
     margin-right: 5px;
+    font-size: 1em;
   }
 
   .msgbox {
     width: 100%;
     height: 54px;
-    padding: 0.5em;
+    padding: 8px;
     border: 1px solid var(--color-border);
     position: relative;
     border-radius: var(--btn-radius);
@@ -305,7 +306,8 @@
     align-items: center;
     width: 5em;
     right: 20px;
-    bottom: 0.55em;
+    bottom: calc(26px - 1em);
+    font-size: 1em;
     border-radius: var(--btn-radius);
     font-weight: bold;
     border: 1px solid var(--color-border);
@@ -320,8 +322,9 @@
     border: none;
     resize: none;
     width: 100%;
-    line-height: 1.5;
+    line-height: 24px;
     padding-right: 85px;
     height: 100%;
+    font-size: 1em;
   }
 </style>

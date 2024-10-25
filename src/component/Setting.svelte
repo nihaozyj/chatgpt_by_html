@@ -190,6 +190,7 @@
     height: 60px;
     padding: 0 10px;
     border-bottom: 1px solid var(--color-border);
+    font-size: 1em;
   }
 
   .list {
@@ -231,7 +232,7 @@
     left: 10px;
     position: absolute;
     width: 100%;
-    font-size: 14px;
+    font-size: 0.875em;
     line-height: 1.5em;
     padding: 5px;
   }
@@ -262,7 +263,7 @@
   .popups-setting * {
     background-color: var(--color-bg);
     color: var(--color-text);
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .popups-setting select,
@@ -294,12 +295,13 @@
     justify-content: space-between;
     width: 100%;
     align-items: center;
+    padding: 0;
   }
 
   #setting-form > .header > button {
     border: 1px solid var(--color-border);
     padding: 5px 15px;
-    font-size: 16px;
+    font-size: 1.5em;
     color: var(--color-btn-text);
   }
 
@@ -320,6 +322,7 @@
     border-bottom: 1px solid var(--color-border);
     padding: 10px 0;
     position: relative;
+    font-size: 1.5em;
   }
 
   .setting-content > .item:last-child {
@@ -339,7 +342,7 @@
   input[type="checkbox"]::after {
     content: " ";
     color: red;
-    font-size: 16px;
+    font-size: 1em;
     display: block;
     position: absolute;
     right: 0;

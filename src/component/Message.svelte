@@ -400,7 +400,7 @@
   }
 
   * {
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .item {
@@ -454,7 +454,7 @@
   }
 
   .btns button {
-    font-size: 12px;
+    font-size: 0.75em;
     padding: 5px 8px;
     margin: 0 !important;
     border: 1px solid var(--color-border);
@@ -473,7 +473,7 @@
     padding: 0 15px;
     background-color: var(--color-bg);
     color: var(--color-secondary-text);
-    font-size: 12px;
+    font-size: 0.75em;
     user-select: none;
   }
 

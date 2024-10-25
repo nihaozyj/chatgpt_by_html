@@ -106,7 +106,7 @@
   #fileList > div {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .file_box {
@@ -120,7 +120,7 @@
     border: 1px solid var(--color-border);
     background-color: var(--color-code-bg);
     color: var(--color-tip-text);
-    font-size: 14px;
+    font-size: 0.875em;
     cursor: pointer;
   }
   label::after {
@@ -130,7 +130,7 @@
     left: 0;
     top: 14px;
     text-align: center;
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   label [type="file"] {
@@ -138,7 +138,7 @@
   }
 
   .tips {
-    font-size: 12px;
+    font-size: 0.75em;
     color: var(--color-tip-text);
     border-top: 1px solid var(--color-border);
     padding-top: 5px;

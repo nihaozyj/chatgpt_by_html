@@ -156,12 +156,13 @@
     min-width: 850px;
     min-height: 500px;
     overflow: hidden;
+    font-size: 1.5em;
   }
 
   .popups-agent * {
     background-color: var(--color-bg);
     color: var(--color-text);
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .popups-agent > .content {
@@ -187,7 +188,7 @@
   .content > .header > button {
     border: 1px solid var(--color-border);
     padding: 5px 15px;
-    font-size: 16px;
+    font-size: 1em;
     color: var(--color-btn-text);
   }
 
@@ -243,16 +244,16 @@
   .agent-content > .item > .agent-info > p {
     color: var(--color-secondary-text);
     white-space: nowrap;
-    font-size: 12px;
+    font-size: 0.75em;
   }
 
   .agent-content > .item > .agent-info > h2 {
-    font-size: 16px;
+    font-size: 1em;
   }
 
   .default p::before {
     content: "default";
-    font-size: 12px;
+    font-size: 0.75em;
     margin-right: 5px;
     padding: 0 5px;
     color: var(--color-text);

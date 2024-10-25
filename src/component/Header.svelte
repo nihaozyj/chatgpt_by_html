@@ -50,7 +50,7 @@
     font-weight: bold;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    font-size: 14px;
+    font-size: 0.875em;
     padding: 8px 15px;
   }
 </style>
