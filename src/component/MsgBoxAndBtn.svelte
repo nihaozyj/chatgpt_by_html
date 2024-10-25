@@ -34,7 +34,7 @@
   }
 
   function sendMsg() {
-    if ($sending) return; // 正在发送消息，禁止再次发送
+    if ($sending) return;
     if (message.trim() === "") return;
     eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, { message, files });
     message = "";
@@ -74,25 +74,42 @@
     eventMgr.emit(eventMgr.eventType.MODIFY_DIALOG_CONFIG);
   }
 
-  function handleKeyDown(event) {
-    // 检查是否按下发送快捷键
-    if (sendKey === "ctrl+enter" && event.ctrlKey && event.key === "Enter") {
-      event.preventDefault(); // 防止默认行为
-      sendMsg(); // 发送消息
-    } else if (sendKey === "enter" && event.key === "Enter") {
-      event.preventDefault(); // 防止默认行为
-      sendMsg(); // 发送消息
-    } else if (sendKey === "shift+enter" && event.shiftKey && event.key === "Enter") {
-      // 允许换行
-      return; // 不做任何处理
-    } else {
-      // 其他情况下，允许换行
-      if (event.key === "Enter") {
-        event.preventDefault(); // 防止默认行为
-        message += "\n"; // 添加换行
+  function handleKeyDown(e) {
+    const keys = ["CTRL+ENTER", "ENTER", "SHIFT+ENTER"];
+    const nk = ((e.ctrlKey ? "ctrl+" : e.shiftKey ? "shift+" : "") + e.key).toUpperCase();
+    const sk = sendKey.toUpperCase();
+
+    if (sk === nk) {
+      e.preventDefault();
+      sendMsg();
+    } else if (keys.includes(nk)) {
+      e.preventDefault();
+      const cursorPosition = textarea.selectionStart;
+      const value = message;
+      // 在光标位置插入换行符
+      message = value.slice(0, cursorPosition) + "\n" + value.slice(cursorPosition);
+      // 更新 textarea 的值
+      textarea.value = message;
+      // 设置光标的新位置
+      const newCursorPosition = cursorPosition + 1;
+      // 确保光标处于可视区域
+      const { clientHeight } = textarea;
+      const lineHeight = parseInt(getComputedStyle(textarea).lineHeight, 10);
+      // 计算光标的展现位置
+      const cursorTopPosition = newCursorPosition * lineHeight;
+      const scrollTop = textarea.scrollTop;
+      // 检查光标是否在可视区域外
+      if (cursorTopPosition < scrollTop) {
+        // 光标在可视区上方
+        textarea.scrollTop = cursorTopPosition; // 滚动到光标所在位置
+      } else if (cursorTopPosition > scrollTop + clientHeight) {
+        // 光标在可视区下方
+        textarea.scrollTop = cursorTopPosition - clientHeight + lineHeight; // 滚动到可视区底部
       }
+      textarea.setSelectionRange(newCursorPosition, newCursorPosition);
     }
-    adjustHeight();
+
+    setTimeout(() => adjustHeight());
   }
 
   function truncateFileName(fileName, maxLength = 8) {
