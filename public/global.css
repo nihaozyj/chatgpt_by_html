@@ -398,9 +398,14 @@ button.copy-btn {
   line-height: 1.4em;
 }
 
-.item .content ol,
-.item .content ul {
+ol,
+ul {
+  padding: 0;
+  margin: 0;
+  line-height: 1.5em;
   margin-left: 40px;
+  margin-top: -20px;
+  margin-bottom: -40px;
 }
 
 .item .content h1,

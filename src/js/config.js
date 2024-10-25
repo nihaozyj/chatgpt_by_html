@@ -48,6 +48,10 @@ const configProxy = new Proxy(config, {
   set(target, property, value) {
     target[property] = value;
     localStorage.setItem('config', JSON.stringify(target));
+
+    document.body.className = config.theme;
+    document.body.style.fontSize = `${config.fontSize}px`;
+
     return true;
   }
 });

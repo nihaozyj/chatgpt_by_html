@@ -33,9 +33,7 @@
       agent.name = _agent.name;
     }
     // 校验智能体设定
-    if (!agent.setting) {
-      agent.setting = _agent.setting;
-    }
+    agent.setting = agent.setting.trim();
     // 校验对话模型
     if (!Ag.modelList.includes(agent.model) && !agent.custom_model_list.includes(agent.model)) {
       agent.model = Ag.modelList[0]; // 默认选择第一个模型

@@ -17,7 +17,6 @@
   import hljs from "highlight.js";
   import * as db from "../js/db";
   import utils from "../js/utils";
-  import { now } from "svelte/internal";
 
   // 创建一个引用
   let messageContainer;
@@ -437,6 +436,16 @@
     white-space: normal;
     overflow-wrap: break-word;
     word-break: break-word;
+    font-size: 1.2em;
+  }
+
+  .content > * {
+    padding: 0;
+    margin-bottom: 5px;
+  }
+
+  .content > * * {
+    padding: 0;
   }
 
   .btns {

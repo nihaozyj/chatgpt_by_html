@@ -11,5 +11,6 @@ const app = new App({
 });
 
 document.body.className = config.theme;
+document.body.style.fontSize = `${config.fontSize}px`;
 
 export default app;
