@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import configProxy from "../js/config";
   import eventMgr from "../js/eventMgr";
   import utils from "../js/utils";
@@ -185,6 +186,21 @@
     const _fls = _fs.filter((f, i) => _fs.findIndex((f2) => f2.name === f.name) === i);
     files = _fls; // 更新文件列表
   }
+
+  onMount(() => {
+    document.addEventListener("keydown", (e) => {
+      // 检查按下的键是否是空格键
+      if (e.code === "Space") {
+        // 获取 textarea 的焦点状态
+        if (document.activeElement !== textarea) {
+          // 如果 textarea 没有焦点，则将焦点设置到 textarea 上
+          textarea.focus();
+          // 阻止默认的空格键行为（例如，避免页面滚动）
+          e.preventDefault();
+        }
+      }
+    });
+  });
 
   init();
 </script>

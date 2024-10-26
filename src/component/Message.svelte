@@ -1,6 +1,4 @@
 <script context="module">
-  import Historys from "./Historys.svelte";
-  import Message from "./Message.svelte";
   /** 当前消息状态，为真说明消息发送中，禁止再次发送消息，为假说明可以发送消息 */
   export const sending = writable(false);
 </script>
@@ -210,9 +208,9 @@
         let errMsg = "";
 
         if (isEvenCodeBlockCount(lastMsg.content)) {
-          lastMsg.content += `\n<pre><code style="padding: 8px;">${err}</code></pre>\n`;
+          lastMsg.content += `\n<pre><code style="padding: 8px;color:red;">${err}</code></pre>\n`;
         } else {
-          lastMsg.content += `\n\n\`\`\`\n<pre><code style="padding: 8px;">${err}</code></pre>\n`;
+          lastMsg.content += `\n\n\`\`\`\n<pre><code style="padding: 8px;color:red;">${err}</code></pre>\n`;
         }
 
         if (nowConversational.agent.model === "") errMsg += "`[模型未设置]`";
@@ -371,7 +369,7 @@
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
       <div class="content">
-        {@html mdToHtml(item.content, item.role)}
+        {@html mdToHtml(item.content, item.role)}{#if $sending && item.content === ""}<span class="loading-cursor">|</span>{/if}
       </div>
       <div class="left btns" data-index={index}>
         <button class="iconfont" title="======复制======" on:click={() => copyContent(item.content)}>&#xe60f;</button>
@@ -386,6 +384,24 @@
 </main>
 
 <style>
+  .loading-cursor {
+    display: inline;
+    font-weight: bold;
+    color: var(--color-text);
+    animation: blink 1s step-start infinite;
+  }
+
+  /* 定义闪烁动画 */
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1; /* 完全可见 */
+    }
+    50% {
+      opacity: 0; /* 半透明 */
+    }
+  }
+
   main {
     flex-grow: 1;
     height: 0;
