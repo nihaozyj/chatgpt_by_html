@@ -348,14 +348,16 @@
       isUserScrolling = scrollTop < lastScrollTop; // 如果当前滚动位置小于上次位置，表示用户正在向上滚动
       lastScrollTop = scrollTop; // 更新上次滚动位置
     });
-  });
 
-  function isElementInViewport(el) {
-    // 获取元素的边界矩形
-    const rect = el.getBoundingClientRect();
-    // 检查元素的底部和顶部是否在可视区域内
-    return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-  }
+    document.addEventListener("keydown", (event) => {
+      if (!event.ctrlKey) return;
+      if (event.key === "ArrowUp") {
+        handleKeyDown();
+      } else if (event.key === "ArrowDown") {
+        handleKeyUp();
+      }
+    });
+  });
 
   function findVisibleItems() {
     // 获取容器的边界
@@ -371,43 +373,6 @@
 
     return visibleItems; // 返回所有在可视区域内的子元素
   }
-
-  // function handleKeyDown() {
-  //   const visibleItems = findVisibleItems();
-  //   console.log(visibleItems);
-
-  //   // 如果有可见元素
-  //   if (visibleItems.length > 0) {
-  //     // 获取第一个可见元素
-  //     const targetElement = visibleItems[0];
-  //     // 获取该元素的边界
-  //     const targetRect = targetElement.getBoundingClientRect();
-  //     // 获取容器的边界
-  //     const containerRect = messageContainer.getBoundingClientRect();
-
-  //     // 检查目标元素是否已经与容器顶部对齐
-  //     if (targetRect.top <= containerRect.top) {
-  //       // 目标元素已经和容器的顶部对齐，查找该元素的前一个兄弟元素
-  //       const previousElement = targetElement.previousElementSibling; // 获取上一个兄弟元素
-  //       console.log(previousElement);
-
-  //       if (previousElement) {
-  //         const previousRect = previousElement.getBoundingClientRect();
-  //         // 计算要滚动的位置以将前一个元素的顶部与容器顶部对齐
-  //         const scrollAmount = previousRect.top - containerRect.top + messageContainer.scrollTop;
-
-  //         // 执行滚动
-  //         messageContainer.scrollTop = scrollAmount;
-  //       }
-  //     } else {
-  //       // 向上滚动，使目标元素的顶部与容器的顶部对齐
-  //       const scrollAmount = targetRect.top - containerRect.top + messageContainer.scrollTop;
-
-  //       // 执行滚动
-  //       messageContainer.scrollTop = scrollAmount;
-  //     }
-  //   }
-  // }
 
   function handleKeyDown() {
     const visibleItems = findVisibleItems();
@@ -469,8 +434,8 @@
 </main>
 
 <div class="ctrl-button">
-  <button on:click={handleKeyDown}>上</button>
-  <button on:click={handleKeyUp}>下</button>
+  <button class="iconfont" on:click={handleKeyDown}>&#xe671;</button>
+  <button class="iconfont" on:click={handleKeyUp}>&#xe679;</button>
 </div>
 
 <style>
@@ -484,7 +449,9 @@
 
   .ctrl-button button {
     border: 1px solid var(--color-border);
-    margin: 5px 0;
+    margin: 10px 0;
+    padding: 8px;
+    font-size: 18px;
   }
 
   .loading-cursor {
