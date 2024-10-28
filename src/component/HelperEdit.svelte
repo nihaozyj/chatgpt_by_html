@@ -50,7 +50,6 @@
     }
     // 校验自定义模型
     if (typeof agent.custom_model_list === "string") {
-      console.log(agent.custom_model_list);
       agent.custom_model_list = agent.custom_model_list.split(",").map((model) => model.trim());
     } else {
       agent.custom_model_list = []; // 默认值为空数组

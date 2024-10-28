@@ -140,7 +140,6 @@
 
   function handlePaste(event) {
     const items = (event.clipboardData || window.clipboardData).items;
-    console.log("handlePaste", items[0].kind);
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       if (item.kind === "file") {
@@ -175,7 +174,6 @@
       }
       // 对于其他类型的文件，不做处理
     }
-    console.log("processFiles", results);
     return results;
   }
 
