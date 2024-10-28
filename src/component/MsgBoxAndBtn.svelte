@@ -5,6 +5,7 @@
   import utils from "../js/utils";
   import FileUnload from "./FileUnload.svelte";
   import { sending } from "./Message.svelte";
+  import { isSpaceBarFocused } from "../js/db";
 
   let textarea;
   let msgbox;
@@ -189,6 +190,7 @@
 
   onMount(() => {
     document.addEventListener("keydown", (e) => {
+      if (!$isSpaceBarFocused) return;
       // 检查按下的键是否是空格键
       if (e.code === "Space") {
         // 获取 textarea 的焦点状态
@@ -200,6 +202,7 @@
         }
       }
     });
+    textarea.focus();
   });
 
   init();

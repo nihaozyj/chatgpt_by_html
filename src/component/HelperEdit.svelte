@@ -14,11 +14,13 @@
   const dispatch = createEventDispatcher();
 
   $: if (isOpen) {
+    db.isSpaceBarFocused.set(false);
     if (!agent && isSave) isOpen = false;
     else if (typeof agent.custom_model_list === "Array") {
       agent.custom_model_list = agent.custom_model_list.join(",");
     }
   } else {
+    db.isSpaceBarFocused.set(true);
     if (agent && typeof agent === "object") {
       dispatch("close", JSON.parse(JSON.stringify(agent)));
     } else {

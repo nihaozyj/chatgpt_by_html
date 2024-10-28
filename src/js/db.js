@@ -1,3 +1,5 @@
+import { writable } from "svelte/store";
+
 const dbName = 'ChatAppDB';
 const dbVersion = 1;
 const storeNames = {
@@ -148,6 +150,9 @@ async function initDB() {
   await openDB();
 }
 
+/** 是否打开空格键获取焦点 */
+let isSpaceBarFocused = writable(true);
+
 // 导出接口
 export {
   initDB,
@@ -156,5 +161,6 @@ export {
   deleteData,
   getData,
   getAllData,
-  storeNames
+  storeNames,
+  isSpaceBarFocused
 };

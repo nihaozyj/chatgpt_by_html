@@ -1,4 +1,6 @@
 <script>
+  import { isSpaceBarFocused } from "../js/db";
+
   /** 控制弹窗是否显示 */
   export let isOpen = false;
   /** 内容区域的尺寸，小于1为百分比，大于1为像素 */
@@ -12,8 +14,11 @@
   $: _height = height > 1 ? `${height}px` : `${height * 100}%`;
   // 监听变化，保证弹窗层级正确
   $: if (isOpen) {
+    isSpaceBarFocused.set(false);
     zIndex = +(localStorage.getItem("zIndex") || "999") + 1;
     localStorage.setItem("zIndex", zIndex);
+  } else {
+    isSpaceBarFocused.set(true);
   }
 </script>
 

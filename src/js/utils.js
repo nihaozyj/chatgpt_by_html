@@ -1,3 +1,5 @@
+import { isSpaceBarFocused } from "./db";
+
 /**
  * 打开一个弹窗，输入一段内容，并返回输入的内容
  * @param {string} title 弹窗标题
@@ -10,6 +12,8 @@ async function openInputDialog(title, message) {
 
   document.body.insertAdjacentHTML('beforeend', template);
 
+  isSpaceBarFocused.set(false);
+
   return await new Promise(resolve => {
     const modal = document.querySelector(`#${id}`);
     const input = modal.querySelector('input');
@@ -17,6 +21,7 @@ async function openInputDialog(title, message) {
     const enterBtn = modal.querySelector('[data-tyle="enter"]');
 
     const close = (data) => {
+      isSpaceBarFocused.set(true);
       modal.classList.remove('fadeIn');
       modal.classList.add('fadeOut');
       setTimeout(() => {
@@ -49,6 +54,8 @@ async function openSelectDialog(title, selects, value) {
 
   document.body.insertAdjacentHTML('beforeend', template);
 
+  isSpaceBarFocused.set(false);
+
   return new Promise(resolve => {
     const modal = document.querySelector(`#${id}`);
     const select = modal.querySelector('select');
@@ -56,6 +63,7 @@ async function openSelectDialog(title, selects, value) {
     const enterBtn = modal.querySelector('[data-tyle="enter"]');
 
     const close = (data) => {
+      isSpaceBarFocused.set(true);
       modal.classList.remove('fadeIn');
       modal.classList.add('fadeOut');
       setTimeout(() => {
@@ -81,6 +89,8 @@ async function openTextareaDialog(title, message) {
 
   document.body.insertAdjacentHTML('beforeend', template);
 
+  isSpaceBarFocused.set(false);
+
   return new Promise(resolve => {
     const modal = document.querySelector(`#${id}`);
     const textarea = modal.querySelector('textarea');
@@ -88,6 +98,7 @@ async function openTextareaDialog(title, message) {
     const enterBtn = modal.querySelector('[data-tyle="enter"]');
 
     const close = (data) => {
+      isSpaceBarFocused.set(true);
       modal.classList.remove('fadeIn');
       modal.classList.add('fadeOut');
       setTimeout(() => {
