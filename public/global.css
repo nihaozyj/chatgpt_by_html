@@ -457,3 +457,7 @@ tbody tr:nth-child(even) {
   background-color: var(--color-code-bg);
   /* 偶数行背景颜色 */
 }
+
+img {
+  max-width: 100%;
+}

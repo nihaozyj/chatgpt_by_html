@@ -75,8 +75,6 @@
 		display: flex;
 		width: 100vw;
 		height: 100vh;
-		min-width: 850px;
-		min-height: 500px;
 		overflow: hidden;
 		padding: 10px;
 	}

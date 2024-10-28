@@ -1,10 +1,10 @@
 class Config {
   /** 当前主题  */
-  theme = 'light';
+  theme = 'dark';
   /** 当前侧栏宽度 */
-  sidebarWidth = 300;
+  sidebarWidth = 200;
   /** 侧栏是否隐藏 */
-  sidebarHidden = false;
+  sidebarHidden = true;
 
   /** 字体大小 */
   fontSize = 16;
