@@ -123,7 +123,7 @@
             </div>
             <div class="item">
               <span>请求地址(baseurl)</span>
-              <input bind:value={agent.base_url} type="text" placeholder="示例:https://api.openai.com" />
+              <input bind:value={agent.base_url} type="text" placeholder="示例:https://api.openai.com/v1" />
             </div>
             <div class="item">
               <span>请求密钥(apikey)</span>

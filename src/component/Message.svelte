@@ -179,7 +179,7 @@
       presence_penalty: agent.frequency_penalty,
       messages,
     };
-    chatApi.chat(`${agent.base_url}/v1/chat/completions`, agent.api_key, body, handleMessage);
+    chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage);
     // 滚动到最底部
     setTimeout(() => scrollToBottom());
   });

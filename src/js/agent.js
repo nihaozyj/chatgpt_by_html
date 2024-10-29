@@ -1,5 +1,5 @@
 /** 模型列表 */
-const modelList = ['gpt-4o', 'gpt-4o-mini', 'GLM-4-Flash'];
+const modelList = ['gpt-4o', 'gpt-4o-mini', 'GLM-4-Flash', 'GLM-4-Plus', 'GLM-4V', 'GLM-4-Air', 'GLM-4-AirX', 'GLM-4-Long', 'GLM-4V-Plus', 'ChatGLM-3'];
 
 /** 角色类型 */
 const roleType = {
