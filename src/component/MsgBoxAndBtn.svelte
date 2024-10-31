@@ -203,6 +203,12 @@
     textarea.focus();
   });
 
+  /** 点击一条指令 */
+  function handleCommand(text) {
+    message = text;
+    setTimeout(() => adjustHeight());
+  }
+
   init();
 </script>
 
@@ -239,14 +245,57 @@
   {#if fileboxIsOpen}
     <FileUnload on:close={() => (fileboxIsOpen = false)} on:file-upload-result={handleFileUploadResult} />
   {/if}
+  {#if message === "/"}
+    <div class="keys-box">
+      {#each configProxy.shhortcuts as item}
+        <button class="key-item" on:click={() => handleCommand(item)}>{item}</button>
+      {/each}
+    </div>
+  {/if}
 </main>
 
 <style>
+  .keys-box {
+    position: absolute;
+    border: 1px solid var(--color-border);
+    padding: 5px 10px;
+    border-radius: var(--radius);
+    background-color: var(--color-bg);
+    bottom: 4em;
+    width: calc(100% - 10px);
+    max-height: 20em;
+    overflow-y: auto;
+  }
+
+  .key-item {
+    border-bottom: 1px solid var(--color-border);
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 1em;
+    color: var(--color-text);
+  }
+
+  .active {
+    background-color: var(--color-btn-bg);
+    border-radius: var(--radius);
+  }
+
+  .key-item:last-child {
+    border-bottom: none;
+  }
+
   main {
     height: 92px;
     padding: 10px 0 100px 0;
     padding: 10px;
     position: relative;
+    user-select: none;
   }
 
   .content {

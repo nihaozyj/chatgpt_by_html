@@ -12,7 +12,6 @@
   function convertAndCheckRange(inputString) {
     // 将字符串转换为数字
     const number = Number(inputString);
-
     // 检查转换后的值是否为有效数字且在12到28之间
     if (!isNaN(number) && number >= 12 && number <= 28) {
       return number;
@@ -29,6 +28,9 @@
         config[key] = configCopy[key];
       }
     }
+    setTimeout(() => {
+      config.fontSize = config.fontSize;
+    });
     isOpen = false;
   }
 
