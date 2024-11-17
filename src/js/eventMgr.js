@@ -49,6 +49,8 @@ const eventType = {
   DIALOG_UPDATE: 'dialogUpdate',
   /** 显示或者隐藏侧栏 */
   TOGGLE_SIDEBAR: 'toggleSidebar',
+  /** 更新对话标题 */
+  UPDATE_DIALOG_TITLE: 'updateDialogTitle',
 };
 
 

@@ -1,11 +1,11 @@
 <script>
-  import eventMgr from "../js/eventMgr.js";
-  import utils from "../js/utils.js";
-  import HelperEdit from "./HelperEdit.svelte";
-  import * as db from "../js/db.js";
-  import { onMount } from "svelte";
-  import { modelList } from "../js/agent.js";
-  import { writable } from "svelte/store";
+  import eventMgr from '../js/eventMgr.js';
+  import utils from '../js/utils.js';
+  import HelperEdit from './HelperEdit.svelte';
+  import * as db from '../js/db.js';
+  import { onMount } from 'svelte';
+  import { modelList } from '../js/agent.js';
+  import { writable } from 'svelte/store';
 
   export let width;
   export let isLeftHide = true;
@@ -23,16 +23,25 @@
   const { eventType: type } = eventMgr;
 
   function btnsSwitch(e) {
-    const btns = e.target.querySelector(".btns");
-    if (btns.style.display === "none") {
-      btns.style.display = "block";
+    const btns = e.target.querySelector('.btns');
+    if (btns.style.display === 'none') {
+      btns.style.display = 'block';
     } else {
-      btns.style.display = "none";
+      btns.style.display = 'none';
     }
   }
 
   onMount(() => {
     init();
+  });
+
+  eventMgr.on(type.UPDATE_DIALOG_TITLE, (data) => {
+    for (let i = 0; i < conversations.length; i++) {
+      if (conversations[i].id === data.id) {
+        conversations[i].title = data.title;
+        break;
+      }
+    }
   });
 
   async function init() {
@@ -42,7 +51,7 @@
       if (Date.now() - timerBegin < readTimeout) {
         setTimeout(() => init());
       } else {
-        console.error("读取数据库超时");
+        console.error('读取数据库超时');
       }
     }
     if (conversations.length > 0) {
@@ -72,7 +81,7 @@
     try {
       await db.updateData(db.storeNames.conversations, conversation);
     } catch (error) {
-      console.error("更新数据库失败, 置顶信息可能丢失");
+      console.error('更新数据库失败, 置顶信息可能丢失');
     }
     conversations = [conversation, ...conversations];
   }
@@ -82,7 +91,7 @@
     try {
       db.deleteData(db.storeNames.conversations, conversation.id);
     } catch (error) {
-      console.error("删除失败，可能id为找到或者系统错误！");
+      console.error('删除失败，可能id为找到或者系统错误！');
     }
     conversations.splice(conversations.indexOf(conversation), 1);
     conversations = conversations;
@@ -98,7 +107,7 @@
 
   /** 编辑 */
   function handleEdit(conversation) {
-    utils.openInputDialog("编辑对话标题", conversation.title).then((title) => {
+    utils.openInputDialog('编辑对话标题', conversation.title).then((title) => {
       if (!title) return;
 
       try {
@@ -108,7 +117,7 @@
         conversations = conversations;
         db.updateData(db.storeNames.conversations, conversation);
       } catch (error) {
-        console.error("更新数据库失败, 编辑信息可能丢失");
+        console.error('更新数据库失败, 编辑信息可能丢失');
       }
     });
   }
@@ -118,21 +127,21 @@
     const ag = con.agent;
     const models = [...modelList, ...ag.custom_model_list];
     const selects = models.map((item) => ({ value: item, label: item }));
-    utils.openSelectDialog("模型选择", selects, ag.model).then(async (model) => {
+    utils.openSelectDialog('模型选择', selects, ag.model).then(async (model) => {
       if (!model) return;
       try {
         con.agent.model = model;
         await db.updateData(db.storeNames.conversations, con);
         eventMgr.emit(type.DIALOG_UPDATE, con);
       } catch (error) {
-        console.error("更新数据库失败");
+        console.error('更新数据库失败');
       }
     });
   });
 
   eventMgr.on(type.MODIFY_DIALOG_CONFIG, async () => {
     const con = conversations.find((item) => item.id === nowConvasationId);
-    if (!con) return console.error("当前对话不存在");
+    if (!con) return console.error('当前对话不存在');
     nowAgent = con.agent;
     isOpen.set(true);
   });
@@ -140,13 +149,13 @@
   async function handleClear(event) {
     if (!event.detail) return;
     const con = conversations.find((item) => item.id === nowConvasationId);
-    if (!con) return console.error("当前对话不存在");
+    if (!con) return console.error('当前对话不存在');
     con.agent = event.detail;
     try {
       await db.updateData(db.storeNames.conversations, con);
       eventMgr.emit(type.DIALOG_UPDATE, con);
     } catch (error) {
-      console.error("更新数据库失败");
+      console.error('更新数据库失败');
     }
   }
 
@@ -171,8 +180,8 @@
   <!-- 历史记录列表 -->
   <div class="historys">
     {#each conversations as item}
-      <div class={`item ${item.id === nowConvasationId ? "active" : ""}`}>
-        <h2 on:keydown={(event) => event.key === "Enter" && handleActive(item)} on:click={() => handleActive(item)}>
+      <div class={`item ${item.id === nowConvasationId ? 'active' : ''}`}>
+        <h2 on:keydown={(event) => event.key === 'Enter' && handleActive(item)} on:click={() => handleActive(item)}>
           <span class="iconfont">&#xe69d;</span>
           {item.title}
         </h2>

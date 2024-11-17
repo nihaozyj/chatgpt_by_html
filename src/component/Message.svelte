@@ -142,11 +142,15 @@
         }
       }
     }
+
     // 使用用户的问题作为对话的标题
-    if (nowConversational.message.length === 0) {
+    if (nowConversational.messages.length === 0) {
       nowConversational.title = msg.trim().slice(0, 20);
+      eventMgr.emit(eventMgr.eventType.UPDATE_DIALOG_TITLE, nowConversational);
     }
+
     nowConversational.messages = [...nowConversational.messages, newMsg, resMsg];
+
     chatApi = createChatApi();
     const { agent } = nowConversational;
     // 消息格式化
