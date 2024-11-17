@@ -1,11 +1,11 @@
 <script>
-  import { onMount } from "svelte";
-  import configProxy from "../js/config";
-  import eventMgr from "../js/eventMgr";
-  import utils from "../js/utils";
-  import FileUnload from "./FileUnload.svelte";
-  import { sending } from "./Message.svelte";
-  import { isSpaceBarFocused } from "../js/db";
+  import { onMount } from 'svelte';
+  import configProxy from '../js/config';
+  import eventMgr from '../js/eventMgr';
+  import utils from '../js/utils';
+  import FileUnload from './FileUnload.svelte';
+  import { sending } from './Message.svelte';
+  import { isSpaceBarFocused } from '../js/db';
 
   let textarea;
   let msgbox;
@@ -16,7 +16,7 @@
   let sendKey;
 
   function init() {
-    message = "";
+    message = '';
     files = null;
     sendKey = configProxy.sendMsgKey;
   }
@@ -27,7 +27,7 @@
   }
 
   function adjustHeight() {
-    textarea.style.height = "34px";
+    textarea.style.height = '34px';
     // 计算新的高度
     const newHeight = Math.min(textarea.scrollHeight, 10 * 24);
     textarea.style.height = `${newHeight}px`;
@@ -37,9 +37,9 @@
 
   function sendMsg() {
     if ($sending) return;
-    if (message.trim() === "") return;
+    if (message.trim() === '') return;
     eventMgr.emit(eventMgr.eventType.SEND_MESSAGE, { message, files });
-    message = "";
+    message = '';
     setTimeout(() => adjustHeight());
     files = null;
   }
@@ -77,8 +77,8 @@
   }
 
   function handleKeyDown(e) {
-    const keys = ["CTRL+ENTER", "ENTER", "SHIFT+ENTER"];
-    const nk = ((e.ctrlKey ? "ctrl+" : e.shiftKey ? "shift+" : "") + e.key).toUpperCase();
+    const keys = ['CTRL+ENTER', 'ENTER', 'SHIFT+ENTER'];
+    const nk = ((e.ctrlKey ? 'ctrl+' : e.shiftKey ? 'shift+' : '') + e.key).toUpperCase();
     const sk = sendKey.toUpperCase();
 
     if (sk === nk) {
@@ -89,7 +89,7 @@
       const cursorPosition = textarea.selectionStart;
       const value = message;
       // 在光标位置插入换行符
-      message = value.slice(0, cursorPosition) + "\n" + value.slice(cursorPosition);
+      message = value.slice(0, cursorPosition) + '\n' + value.slice(cursorPosition);
       // 更新 textarea 的值
       textarea.value = message;
       // 设置光标的新位置
@@ -126,7 +126,7 @@
   }
 
   function previewFile(index) {
-    if (files[index].type === "txt") {
+    if (files[index].type === 'txt') {
       utils.openTextareaDialog(files[index].name, files[index].content);
     } else {
       utils.openImageDialog(files[index].name, files[index].content);
@@ -142,7 +142,7 @@
     const items = (event.clipboardData || window.clipboardData).items;
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      if (item.kind === "file") {
+      if (item.kind === 'file') {
         const file = item.getAsFile();
         if (file) {
           // 处理文件上传
@@ -154,23 +154,23 @@
 
   async function processFiles(fls) {
     const results = [];
-    const supportedTextTypes = ["text/plain", "text/markdown", "text/javascript", "text/html", "text/css", "application/json"]; // 支持的文本 MIME 类型
+    const supportedTextTypes = ['text/plain', 'text/markdown', 'text/javascript', 'text/html', 'text/css', 'application/json']; // 支持的文本 MIME 类型
 
     for (let file of fls) {
-      const fileType = file.type.split("/")[0]; // 获取文件类型
-      const extension = file.name.split(".").pop().toLowerCase();
+      const fileType = file.type.split('/')[0]; // 获取文件类型
+      const extension = file.name.split('.').pop().toLowerCase();
 
-      if (fileType === "image") {
+      if (fileType === 'image') {
         // 检查文件大小，假设限制为 3MB
         if (file.size > 3 * 1024 * 1024) {
           file = await utils.compressImage(file); // 压缩文件
         }
         const base64 = await utils.convertToBase64(file);
-        results.push({ type: "img", content: base64, name: file.name });
-      } else if (fileType === "text" || supportedTextTypes.includes(file.type) || extension === "md") {
+        results.push({ type: 'img', content: base64, name: file.name });
+      } else if (fileType === 'text' || supportedTextTypes.includes(file.type) || extension === 'md') {
         // 处理支持的文本文件类型
         const textContent = await utils.readTextFile(file);
-        results.push({ type: "txt", content: textContent, name: file.name });
+        results.push({ type: 'txt', content: textContent, name: file.name });
       }
       // 对于其他类型的文件，不做处理
     }
@@ -187,10 +187,10 @@
   }
 
   onMount(() => {
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener('keydown', (e) => {
       if (!$isSpaceBarFocused) return;
       // 检查按下的键是否是空格键
-      if (e.code === "Space") {
+      if (e.code === 'Space') {
         // 获取 textarea 的焦点状态
         if (document.activeElement !== textarea) {
           // 如果 textarea 没有焦点，则将焦点设置到 textarea 上
@@ -245,7 +245,7 @@
   {#if fileboxIsOpen}
     <FileUnload on:close={() => (fileboxIsOpen = false)} on:file-upload-result={handleFileUploadResult} />
   {/if}
-  {#if message === "/"}
+  {#if message === '/'}
     <div class="keys-box">
       {#each configProxy.shhortcuts as item}
         <button class="key-item" on:click={() => handleCommand(item)}>{item}</button>
@@ -279,11 +279,6 @@
     text-align: left;
     font-size: 1em;
     color: var(--color-text);
-  }
-
-  .active {
-    background-color: var(--color-btn-bg);
-    border-radius: var(--radius);
   }
 
   .key-item:last-child {
