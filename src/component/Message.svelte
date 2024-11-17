@@ -4,24 +4,24 @@
 </script>
 
 <script>
-  import eventMgr from "../js/eventMgr";
-  import { roleType } from "../js/agent";
-  import { writable } from "svelte/store";
-  import * as Con from "../js/conversation";
-  import { marked } from "marked";
-  import { afterUpdate, onMount } from "svelte";
-  import { createChatApi } from "../js/api";
-  import "highlight.js/styles/atom-one-dark.min.css";
-  import hljs from "highlight.js";
-  import * as db from "../js/db";
-  import utils from "../js/utils";
+  import eventMgr from '../js/eventMgr';
+  import { roleType } from '../js/agent';
+  import { writable } from 'svelte/store';
+  import * as Con from '../js/conversation';
+  import { marked } from 'marked';
+  import { afterUpdate, onMount } from 'svelte';
+  import { createChatApi } from '../js/api';
+  import 'highlight.js/styles/atom-one-dark.min.css';
+  import hljs from 'highlight.js';
+  import * as db from '../js/db';
+  import utils from '../js/utils';
 
   // 创建一个引用
   let messageContainer;
   // 聊天请求实例
   let chatApi = null;
   // 用户当前发送的消息
-  let userMsg = "";
+  let userMsg = '';
 
   /** 当前历史记录起始位置 */
   let historyStart = 0;
@@ -51,13 +51,13 @@
 
   function escapeHtml(html) {
     const text = document.createTextNode(html);
-    const div = document.createElement("div");
+    const div = document.createElement('div');
     div.appendChild(text);
     return div.innerHTML;
   }
 
   function splitText(text) {
-    const delimiter = "[<><>cross-line<><>]";
+    const delimiter = '[<><>cross-line<><>]';
     const index = text.indexOf(delimiter);
 
     if (index !== -1) {
@@ -82,15 +82,15 @@
       const html = marked(md).trim();
       // 使用 DOMParser 解析 HTML
       const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
+      const doc = parser.parseFromString(html, 'text/html');
 
       // 查找所有的代码块
-      const codeBlocks = doc.querySelectorAll("pre code");
+      const codeBlocks = doc.querySelectorAll('pre code');
       codeBlocks.forEach((codeBlock) => {
         // 创建复制按钮
-        const copyButton = document.createElement("button");
-        copyButton.innerHTML = "&#xe60f; 复制代码";
-        copyButton.className = "copy-btn iconfont";
+        const copyButton = document.createElement('button');
+        copyButton.innerHTML = '&#xe60f; 复制代码';
+        copyButton.className = 'copy-btn iconfont';
         // 将按钮插入到代码块上方
         codeBlock.parentNode.insertBefore(copyButton, codeBlock.parentNode.firstChild);
       });
@@ -108,26 +108,26 @@
 
     // 如果msg中包含文件，则需要加工一下内容，文件只显示文件名，内容不显示，图片则使用base64直接内嵌到消息中，可能会特别影响性能，后期可以优化使用图床
     if (files) {
-      console.log("files", files);
+      console.log('files', files);
       // 文件名列表
-      let textFileNames = "";
+      let textFileNames = '';
       // 图片列表
-      let imageFileMdTages = "";
+      let imageFileMdTages = '';
       files.forEach((file) => {
         const { type, content, name } = file;
-        if (type === "txt") {
+        if (type === 'txt') {
           textFileNames += `<span class="file-name">${name}</span> `;
-        } else if (type === "img") {
+        } else if (type === 'img') {
           imageFileMdTages += `<img src="${content}" alt="${name}" /> `;
         }
       });
       // 组装消息, 由于用户的消息不会解析为hhtml，因此此处使用[-cross-line-]作为分隔符
-      if (textFileNames.trim() !== "" || imageFileMdTages.trim() !== "") {
+      if (textFileNames.trim() !== '' || imageFileMdTages.trim() !== '') {
         msg = `<div class="file-container">${textFileNames} ${imageFileMdTages}</div>[<><>cross-line<><>]` + msg;
       }
     }
     const newMsg = new Con.Message(roleType.user, msg, Date.now());
-    const resMsg = new Con.Message(roleType.assistant, "", Date.now() + 1);
+    const resMsg = new Con.Message(roleType.assistant, '', Date.now() + 1);
 
     const maxHL = Math.max(nowConversational.messages.length - nowConversational.agent.lst_message_num, nowConversational.contextStart[0]);
     const history = JSON.parse(JSON.stringify(nowConversational.messages)).splice(maxHL);
@@ -142,6 +142,10 @@
         }
       }
     }
+    // 使用用户的问题作为对话的标题
+    if (nowConversational.message.length === 0) {
+      nowConversational.title = msg.trim().slice(0, 20);
+    }
     nowConversational.messages = [...nowConversational.messages, newMsg, resMsg];
     chatApi = createChatApi();
     const { agent } = nowConversational;
@@ -153,17 +157,17 @@
         // 用户消息中不存在文件时
         if (!files) return { role: newMsg.role, content: newMsg.content };
         // 用户消息中存在文件时，将文件内容添加到消息中,此处文本直接拼接
-        const item = { role: roleType.user, content: [{ type: "text", text: "" }] };
-        let textFileString = "";
+        const item = { role: roleType.user, content: [{ type: 'text', text: '' }] };
+        let textFileString = '';
         files.forEach((file) => {
           const { type, content, name } = file;
-          if (type === "img") {
-            item.content.push({ type: "image_url", image_url: { url: content } });
+          if (type === 'img') {
+            item.content.push({ type: 'image_url', image_url: { url: content } });
           } else {
             textFileString += `${name}的内容: """${content}""""`;
           }
         });
-        if (textFileString !== "") {
+        if (textFileString !== '') {
           item.content[0].text = `用户上传的文件如下<fileContent>\n${textFileString}\n</fileContent>\n`;
         }
         item.content[0].text += rmsg;
@@ -205,7 +209,7 @@
       // 输出错误信息
       msgs.update((msg) => {
         const lastMsg = msg[msg.length - 1];
-        let errMsg = "";
+        let errMsg = '';
 
         if (isEvenCodeBlockCount(lastMsg.content)) {
           lastMsg.content += `\n<pre><code style="padding: 8px;color:red;">${err}</code></pre>\n`;
@@ -213,9 +217,9 @@
           lastMsg.content += `\n\n\`\`\`\n<pre><code style="padding: 8px;color:red;">${err}</code></pre>\n`;
         }
 
-        if (nowConversational.agent.model === "") errMsg += "`[模型未设置]`";
-        if (nowConversational.agent.api_key === "") errMsg += "`[API KEY未设置]`";
-        if (nowConversational.agent.base_url === "") errMsg += "`[API请求地址未设置]`";
+        if (nowConversational.agent.model === '') errMsg += '`[模型未设置]`';
+        if (nowConversational.agent.api_key === '') errMsg += '`[API KEY未设置]`';
+        if (nowConversational.agent.base_url === '') errMsg += '`[API请求地址未设置]`';
         if (errMsg) lastMsg.content += `出现错误了,可能的原因有：${errMsg}\n`;
         return msg;
       });
@@ -224,7 +228,7 @@
       try {
         await db.updateData(db.storeNames.conversations, nowConversational);
       } catch (e) {
-        console.error("更新失败!", e);
+        console.error('更新失败!', e);
       }
       return;
     }
@@ -240,7 +244,7 @@
       try {
         await db.updateData(db.storeNames.conversations, nowConversational);
       } catch (e) {
-        console.error("更新失败!", e);
+        console.error('更新失败!', e);
       }
 
       return sending.set(false);
@@ -275,14 +279,14 @@
 
   /** 修改 */
   async function modify(text, index) {
-    const newtext = await utils.openTextareaDialog("修改消息", text);
+    const newtext = await utils.openTextareaDialog('修改消息', text);
     if (!newtext) return;
     nowConversational.messages[index].content = newtext;
     nowConversational = nowConversational;
     try {
       await db.updateData(db.storeNames.conversations, nowConversational);
     } catch (e) {
-      console.error("更新失败!", e);
+      console.error('更新失败!', e);
     }
   }
 
@@ -294,14 +298,14 @@
     try {
       await db.updateData(db.storeNames.conversations, nowConversational);
     } catch (e) {
-      console.error("更新失败!", e);
+      console.error('更新失败!', e);
     }
     nowConversational = nowConversational;
   }
 
   /** 重新回答 */
   function reAnswer(index) {
-    console.log("reAnswer", index);
+    console.log('reAnswer', index);
     if (nowConversational.messages[index].role === roleType.assistant) index -= 1;
     if (index < 0) return;
     if (nowConversational.messages[index].role === roleType.assistant) return;
@@ -325,35 +329,35 @@
 
   function copyContent(content) {
     // 创建一个临时文本区域
-    const textarea = document.createElement("textarea");
+    const textarea = document.createElement('textarea');
     textarea.value = content; // 设置要复制的内容
     document.body.appendChild(textarea); // 将文本区域添加到文档中
     textarea.select(); // 选中内容
-    document.execCommand("copy"); // 执行复制命令
+    document.execCommand('copy'); // 执行复制命令
     document.body.removeChild(textarea); // 移除临时文本区域
   }
 
   // 监听点击事件，实现代码块的复制
   onMount(() => {
-    messageContainer.addEventListener("click", (event) => {
+    messageContainer.addEventListener('click', (event) => {
       const target = event.target;
-      if (target.classList.contains("copy-btn")) {
-        const codeBlock = target.parentNode.querySelector("code");
+      if (target.classList.contains('copy-btn')) {
+        const codeBlock = target.parentNode.querySelector('code');
         copyContent(codeBlock.textContent);
       }
     });
     // 监听滚动事件
-    messageContainer.addEventListener("scroll", () => {
+    messageContainer.addEventListener('scroll', () => {
       const scrollTop = messageContainer.scrollTop;
       isUserScrolling = scrollTop < lastScrollTop; // 如果当前滚动位置小于上次位置，表示用户正在向上滚动
       lastScrollTop = scrollTop; // 更新上次滚动位置
     });
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener('keydown', (event) => {
       if (!event.ctrlKey) return;
-      if (event.key === "ArrowUp") {
+      if (event.key === 'ArrowUp') {
         handleKeyDown();
-      } else if (event.key === "ArrowDown") {
+      } else if (event.key === 'ArrowDown') {
         handleKeyUp();
       }
     });
@@ -414,12 +418,12 @@
     <div class="item">
       <div class="left photo">
         <span class="iconfont">
-          {@html item.role !== roleType.assistant ? "&#xe761;" : "&#xe6aa;"}
+          {@html item.role !== roleType.assistant ? '&#xe761;' : '&#xe6aa;'}
         </span>
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
       <div class="content">
-        {@html mdToHtml(item.content, item.role)}{#if $sending && item.content === ""}<span class="loading-cursor">|</span>{/if}
+        {@html mdToHtml(item.content, item.role)}{#if $sending && item.content === ''}<span class="loading-cursor">|</span>{/if}
       </div>
       <div class="left btns" data-index={index}>
         <button class="iconfont" title="======复制======" on:click={() => copyContent(item.content)}>&#xe60f;</button>
@@ -574,7 +578,7 @@
   }
 
   .dividing-line::before {
-    content: "";
+    content: '';
     position: absolute;
     height: 1px;
     left: -1000px;
