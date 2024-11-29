@@ -1,15 +1,15 @@
-**UI 样式**
+**UI Style**
 ![ui](https://github.com/user-attachments/assets/a1807d09-6d08-4ada-a21b-fedf49373533)
 
-**介绍**
-Mini AI Helper 是一个简单的大模型对话程序，支持Markdown显示、多智能体。MiniHelper智能体配置支持单独设置密钥、支持一些主流功能！
+**Introduction**
+Mini AI Helper is a simple large model dialogue program that supports Markdown display and multiple agents. The MiniHelper agent configuration allows for individual setting of keys and supports some mainstream functionalities!
 
-**使用方法**
-点击 [Github Page 在线访问](https://nihaozyj.github.io/) ，或者克隆到本地后执行命令:
+**Usage Instructions**
+Click [Github Page for online access](https://nihaozyj.github.io/), or clone it locally and execute the following commands:
 
 ```
 npm install
 npm run dev
 ```
 
-项目中 `public/` 下的文件是已经打包的的，可以放置在服务器中直接访问
+The files in the `public/` directory of the project are already packaged and can be placed on a server for direct access.
