@@ -1,16 +1,16 @@
 <script>
-  import ResizableModal from "./ResizableModal.svelte";
-  import HelperEdit from "../component/HelperEdit.svelte";
-  import eMer from "../js/eventMgr.js";
-  import * as Cmc from "../js/conversation.js";
-  import config from "../js/config.js";
-  import * as Ag from "../js/agent";
-  import * as db from "../js/db";
-  import eventMgr from "../js/eventMgr.js";
+  import ResizableModal from './ResizableModal.svelte';
+  import HelperEdit from '../component/HelperEdit.svelte';
+  import eMer from '../js/eventMgr.js';
+  import * as Cmc from '../js/conversation.js';
+  import config from '../js/config.js';
+  import * as Ag from '../js/agent';
+  import * as db from '../js/db';
+  import eventMgr from '../js/eventMgr.js';
   export let isOpen = false;
 
   let helperIsOpen = false;
-  let helperTitle = "修改智能体";
+  let helperTitle = '修改智能体';
   let agents = [];
   let agent = null;
 
@@ -27,7 +27,7 @@
     try {
       agents = await db.getAllData(db.storeNames.agents);
     } catch (error) {
-      console.error("数据库查询失败!");
+      console.error('数据库查询失败!');
       agents = [];
     }
     /** 更新默认智能体 */
@@ -41,13 +41,13 @@
   /** 创建智能体 */
   function handleCreate() {
     // helperIsOpen = true;
-    helperTitle = "新建智能体";
+    helperTitle = '新建智能体';
     agent = Ag.Agent.createAgent();
     helperIsOpen = true;
   }
   /** 编辑智能体 */
   function handleEdit(_agent) {
-    helperTitle = "修改智能体";
+    helperTitle = '修改智能体';
     agent = JSON.parse(JSON.stringify(_agent));
     helperIsOpen = true;
   }
@@ -64,7 +64,7 @@
       isOpen = false;
       eMer.emit(eMer.eventType.CREATE_NEW_DIALOG, conversation);
     } catch (error) {
-      console.error("数据库保存失败!");
+      console.error('数据库保存失败!');
     }
   }
 
@@ -82,7 +82,7 @@
       await db.deleteData(db.storeNames.agents, _agent.id);
       agents = agents;
     } catch (error) {
-      console.error("数据库删除失败!");
+      console.error('数据库删除失败!');
     }
   }
 
@@ -126,7 +126,7 @@
             <div class="item">
               <button class="agent-info" title="点击智能体名称或者描述开始对话" on:click={() => handleConversation(agent)}>
                 <h2>{agent.name}</h2>
-                <p>{agent.setting}</p>
+                <p>{agent.setting || '暂无智能体设定!'}</p>
               </button>
               <div class="ctrl">
                 <button on:click={() => handleConversation(agent)}>对话</button>
@@ -252,7 +252,7 @@
   }
 
   .default p::before {
-    content: "default";
+    content: 'default';
     font-size: 0.75em;
     margin-right: 5px;
     padding: 0 5px;
