@@ -430,11 +430,11 @@
         {@html mdToHtml(item.content, item.role)}{#if $sending && item.content === ''}<span class="loading-cursor">|</span>{/if}
       </div>
       <div class="left btns" data-index={index}>
-        <button class="iconfont" title="======复制======" on:click={() => copyContent(item.content)}>&#xe60f;</button>
-        <button class="iconfont" title="======修改======" on:click={() => modify(item.content, index)}>&#xe60e;</button>
-        <button class="iconfont" title="======删除======" on:click={() => deleteMsg(index)}>&#xe657;</button>
+        <button class="iconfont" title="复制" on:click={() => copyContent(item.content)}>&#xe60f; &nbsp;&nbsp;复制</button>
+        <button class="iconfont" title="修改" on:click={() => modify(item.content, index)}>&#xe60e; &nbsp;&nbsp;修改</button>
+        <button class="iconfont" title="删除" on:click={() => deleteMsg(index)}>&#xe657; &nbsp;&nbsp;删除</button>
         {#if $msgs.length <= index + 2}
-          <button class="iconfont" title="重新回答" on:click={() => reAnswer(index)}>&#xe6ff;</button>
+          <button class="iconfont" title="重新回答" on:click={() => reAnswer(index)}>&#xe6ff; &nbsp;&nbsp;重新回答</button>
         {/if}
       </div>
     </div>
@@ -547,7 +547,7 @@
     position: absolute;
     bottom: -25px;
     width: 100%;
-    bottom: -30px;
+    bottom: -32px;
     padding-top: 5px;
     display: none;
   }
@@ -566,6 +566,7 @@
 
   .btns.left {
     left: 0px;
+    font-size: 1.2em;
   }
 
   .dividing-line {
