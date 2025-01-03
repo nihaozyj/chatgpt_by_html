@@ -1,11 +1,12 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import ResizableModal from "./ResizableModal.svelte";
-  import * as db from "../js/db.js";
-  import * as Ag from "../js/agent.js";
+  import { createEventDispatcher } from 'svelte';
+  import ResizableModal from './ResizableModal.svelte';
+  import * as db from '../js/db.js';
+  import * as Ag from '../js/agent.js';
+  import util from '../js/utils.js';
 
   export let isOpen = false;
-  export let title = "修改智能体";
+  export let title = '修改智能体';
   export let agent;
 
   // 为true时，表示不进行提交，点击保存后，通过事件返回修改后的智能体数据
@@ -16,15 +17,13 @@
   $: if (isOpen) {
     db.isSpaceBarFocused.set(false);
     if (!agent && isSave) isOpen = false;
-    else if (typeof agent.custom_model_list === "Array") {
-      agent.custom_model_list = agent.custom_model_list.join(",");
-    }
   } else {
     db.isSpaceBarFocused.set(true);
-    if (agent && typeof agent === "object") {
-      dispatch("close", JSON.parse(JSON.stringify(agent)));
+    if (agent && typeof agent === 'object') {
+      const _agent = JSON.parse(JSON.stringify(agent));
+      dispatch('close', _agent);
     } else {
-      dispatch("close", null);
+      dispatch('close', null);
     }
   }
 
@@ -37,7 +36,7 @@
     // 校验智能体设定
     agent.setting = agent.setting.trim();
     // 校验对话模型
-    if (!Ag.modelList.includes(agent.model) && !agent.custom_model_list.includes(agent.model)) {
+    if (!Ag.modelList.includes(agent.model) && !util.filter(agent.custom_model_list).includes(agent.model)) {
       agent.model = Ag.modelList[0]; // 默认选择第一个模型
     }
     // 校验请求地址
@@ -46,13 +45,7 @@
     }
     // 校验请求密钥
     if (!agent.api_key) {
-      console.error("请填写请求密钥！");
-    }
-    // 校验自定义模型
-    if (typeof agent.custom_model_list === "string") {
-      agent.custom_model_list = agent.custom_model_list.split(",").map((model) => model.trim());
-    } else {
-      agent.custom_model_list = []; // 默认值为空数组
+      console.error('请填写请求密钥！');
     }
     // 校验采样温度(将输入值转换为数字)
     agent.temperature = Number(agent.temperature);
@@ -80,7 +73,7 @@
         db.updateData(db.storeNames.agents, agent);
         isOpen = false;
       } catch (e) {
-        console.error("数据存储失败！", e);
+        console.error('数据存储失败！', e);
       }
     } else {
       isOpen = false;
@@ -116,7 +109,7 @@
             <div class="item">
               <span>对话模型</span>
               <select bind:value={agent.model}>
-                {#each [...Ag.modelList, ...agent.custom_model_list] as model}
+                {#each [...util.filter(agent.custom_model_list), ...Ag.modelList] as model}
                   <option value={model}>{model}</option>
                 {/each}
               </select>
@@ -176,7 +169,7 @@
 
   .popups-setting select,
   .popups-setting textarea,
-  .popups-setting input[type="text"] {
+  .popups-setting input[type='text'] {
     width: 70%;
     line-height: 1.5em;
     caret-color: var(--color-text);
@@ -245,6 +238,6 @@
   }
 
   .setting-content > .item > span::after {
-    content: ":";
+    content: ':';
   }
 </style>

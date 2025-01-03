@@ -1,5 +1,5 @@
 /** 模型列表 */
-const modelList = ['gpt-4o', 'gpt-4o-mini', 'GLM-4-Flash', 'GLM-4-Plus', 'GLM-4V', 'GLM-4-Air', 'GLM-4-AirX', 'GLM-4-Long', 'GLM-4V-Plus', 'ChatGLM-3'];
+const modelList = ['gpt-4o', 'gpt-4o-mini', 'GLM-4-Flash', 'GLM-4-FlashX']
 
 /** 角色类型 */
 const roleType = {
@@ -9,7 +9,7 @@ const roleType = {
   user: 'user',
   /** 助手 */
   assistant: 'assistant',
-};
+}
 
 /** 智能体类 */
 class Agent {
@@ -40,7 +40,7 @@ class Agent {
   /**
    * 自定义模型列表
    */
-  custom_model_list = [];
+  custom_model_list = '';
 
   /**
    * 使用哪个采样温度，取值`0~2`之间。
@@ -78,14 +78,14 @@ class Agent {
    */
   static createAgent(agent) {
     if (!agent) {
-      agent = new Agent();
+      agent = new Agent()
     } else {
-      agent = JSON.parse(JSON.stringify(agent));
+      agent = JSON.parse(JSON.stringify(agent))
     }
 
-    agent.id = `${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 100)}`;
-    agent.name = `NewAgent_${agent.id}`;
-    return agent;
+    agent.id = `${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 100)}`
+    agent.name = `NewAgent_${agent.id}`
+    return agent
   };
 }
 
@@ -93,4 +93,4 @@ export {
   Agent,
   modelList,
   roleType,
-};
+}

@@ -1,20 +1,20 @@
 <script>
-  import config from "../js/config.js";
-  import eventMgr from "../js/eventMgr.js";
+  import config from '../js/config.js';
+  import eventMgr from '../js/eventMgr.js';
   /** 主题切换 */
   function toggleTheme() {
-    const body = document.querySelector("body");
-    if (body.classList.contains("dark")) {
-      body.classList.remove("dark");
-      body.classList.add("light");
+    const body = document.querySelector('body');
+    if (body.classList.contains('dark')) {
+      body.classList.remove('dark');
+      body.classList.add('light');
     } else {
-      body.classList.remove("light");
-      body.classList.add("dark");
+      body.classList.remove('light');
+      body.classList.add('dark');
     }
-    config.theme = body.classList.contains("dark") ? "dark" : "light";
+    config.theme = body.classList.contains('dark') ? 'dark' : 'light';
   }
 
-  let title = "未命名对话";
+  let title = '未命名对话';
 
   eventMgr.on(eventMgr.eventType.OPEN_DIALOG, (conversation) => {
     title = conversation.title;
@@ -24,6 +24,10 @@
   function createNewDialog() {
     eventMgr.emit(eventMgr.eventType.REQUEST_CREATE_NEW_DIALOG);
   }
+
+  eventMgr.on(eventMgr.eventType.UPDATE_DIALOG_TITLE, (data) => {
+    title = data.title;
+  });
 </script>
 
 <main>

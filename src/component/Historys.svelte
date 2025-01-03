@@ -125,7 +125,8 @@
   eventMgr.on(type.MODIFY_DIALOG_MODEL, async () => {
     const con = conversations.find((item) => item.id === nowConvasationId);
     const ag = con.agent;
-    const models = [...modelList, ...ag.custom_model_list];
+    console.log(ag);
+    const models = [...utils.filter(ag.custom_model_list), ...modelList];
     const selects = models.map((item) => ({ value: item, label: item }));
     utils.openSelectDialog('模型选择', selects, ag.model).then(async (model) => {
       if (!model) return;
