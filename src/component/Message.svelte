@@ -404,6 +404,13 @@
   }
 
   function handleKeyUp() {
+    if (isUserScrolling) {
+      if (messageContainer.scrollTop - messageContainer.scrollHeight <= 50) {
+        isUserScrolling = false;
+      } else {
+        return;
+      }
+    }
     // 滚动到最底部
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
