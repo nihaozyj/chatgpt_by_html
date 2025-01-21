@@ -10,7 +10,7 @@
   import * as Con from '../js/conversation';
   import { marked } from 'marked';
   import { afterUpdate, onMount } from 'svelte';
-  import { createChatApi } from '../js/api';
+  import { createChatApi, chatDeepseekReasoner } from '../js/api';
   import 'highlight.js/styles/atom-one-dark.min.css';
   import hljs from 'highlight.js';
   import * as db from '../js/db';
@@ -29,11 +29,16 @@
   let isUserScrolling = false; // 标记用户是否在手动滚动
   let lastScrollTop = 0; // 记录上次的滚动位置
 
+  /** 思维链输出 */
+  let reasoning_content = '';
+
   /**
    * 当前对话
    * @type {Con.Conversational}
    */
   let nowConversational = null;
+
+  let reasoning_content_ref = null;
 
   /**
    * 消息列表
@@ -106,6 +111,8 @@
     const { files } = msg;
     let rmsg = (msg = msg.message.trim());
 
+    const { agent } = nowConversational;
+
     // 如果msg中包含文件，则需要加工一下内容，文件只显示文件名，内容不显示，图片则使用base64直接内嵌到消息中，可能会特别影响性能，后期可以优化使用图床
     if (files) {
       console.log('files', files);
@@ -151,8 +158,12 @@
 
     nowConversational.messages = [...nowConversational.messages, newMsg, resMsg];
 
-    chatApi = createChatApi();
-    const { agent } = nowConversational;
+    if (agent.model === 'deepseek-reasoner') {
+      chatApi = chatDeepseekReasoner();
+    } else {
+      chatApi = createChatApi();
+    }
+
     // 消息格式化
     const messages = [
       { role: roleType.system, content: agent.setting },
@@ -178,6 +189,8 @@
         return item;
       })(),
     ];
+    // 过滤掉不必要的数据
+    messages.map((item) => 'timestamp' in item && delete item.timestamp);
     // 组建请求体
     const body = {
       model: agent.model,
@@ -187,7 +200,25 @@
       presence_penalty: agent.frequency_penalty,
       messages,
     };
-    chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage);
+
+    if (agent.max_tokens > 1000) body.max_tokens = agent.max_tokens;
+
+    if (agent.model === 'deepseek-reasoner') {
+      chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage, (data, err) => {
+        if (data) {
+          reasoning_content += data;
+          setTimeout(() => {
+            reasoning_content_ref.scrollTop = reasoning_content_ref.scrollHeight;
+          });
+        }
+
+        if (err || (err === null && data === null)) {
+          reasoning_content = '';
+        }
+      });
+    } else {
+      chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage);
+    }
     // 滚动到最底部
     setTimeout(() => scrollToBottom());
   });
@@ -202,11 +233,15 @@
     return count % 2 === 0;
   }
 
+  let timer = null;
+
   // 处理接口接受到的消息
   async function handleMessage(data, err) {
     if (!$sending) return;
 
-    if (err) {
+    reasoning_content = '';
+
+    const clear = async () => {
       sending.set(false);
       // 请求失败，取消本次请求
       chatApi.cancel();
@@ -235,7 +270,16 @@
         console.error('更新失败!', e);
       }
       return;
+    };
+
+    if (err && err.message === '解析错误') {
+      if (timer === null) timer = setTimeout(() => clear(), 3000);
+      return;
     }
+
+    if (err) clear();
+
+    timer = null;
 
     if (data == null && err == null) {
       msgs.update((msg) => {
@@ -434,6 +478,9 @@
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
       <div class="content">
+        {#if reasoning_content && reasoning_content != '' && index === $msgs.length - 1 && $sending}
+          <div class="reasoning_content" bind:this={reasoning_content_ref}>{reasoning_content}</div>
+        {/if}
         {@html mdToHtml(item.content, item.role)}{#if $sending && item.content === ''}<span class="loading-cursor">|</span>{/if}
       </div>
       <div class="left btns" data-index={index}>
@@ -454,6 +501,17 @@
 </div>
 
 <style>
+  .reasoning_content {
+    display: block;
+    max-height: 4rem;
+    overflow-y: auto;
+    padding: 200px;
+    border-radius: 10px;
+    background-color: var(--color-bg);
+    font-size: 0.9rem;
+    line-height: 1rem;
+  }
+
   .ctrl-button {
     position: absolute;
     right: 25px;

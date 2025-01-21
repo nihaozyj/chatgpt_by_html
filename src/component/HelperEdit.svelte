@@ -142,6 +142,11 @@
               <span>附带历史消息数</span>
               <input bind:value={agent.lst_message_num} type="text" placeholder="携带的上下文条数" />
             </div>
+
+            <div class="item">
+              <span>最大回复长度</span>
+              <input bind:value={agent.max_tokens} type="number" placeholder="最大回复长度(max_tokens)" />
+            </div>
           {/if}
         </div>
       </form>
@@ -169,6 +174,7 @@
 
   .popups-setting select,
   .popups-setting textarea,
+  .popups-setting input[type='number'],
   .popups-setting input[type='text'] {
     width: 70%;
     line-height: 1.5em;
@@ -176,6 +182,19 @@
     border: 1px solid var(--color-border);
     padding: 0.5em 1em;
     min-width: 100px;
+  }
+
+  /* 移除 type="number" 输入框的上下箭头 */
+  input[type='number'] {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield; /* 标准属性 */
+  }
+
+  /* 移除 Webkit 浏览器（如 Chrome、Safari）中的上下箭头 */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   .popups-setting select {

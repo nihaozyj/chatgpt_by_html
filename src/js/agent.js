@@ -1,5 +1,5 @@
 /** 模型列表 */
-const modelList = ['gpt-4o', 'gpt-4o-mini', 'GLM-4-Flash', 'GLM-4-FlashX']
+const modelList = ['gpt-4o', 'gpt-4o-mini', 'o1-mini', 'GLM-4-Flash', 'GLM-4V-Flash', 'Cogview-3-Flash', 'CogVideoX-Flash']
 
 /** 角色类型 */
 const roleType = {
@@ -71,6 +71,11 @@ class Agent {
    * 接口地址，格式为`http(s)://接口地址``
    */
   base_url = "";
+
+  /**
+   * 最大回复长度
+   */
+  max_tokens = 0;
 
   /**
    * 创建一个智能体实例
