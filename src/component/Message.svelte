@@ -201,7 +201,7 @@
       messages,
     };
 
-    if (agent.max_tokens > 1000) body.max_tokens = agent.max_tokens;
+    if ('max_tokens' in agent && agent.max_tokens > 1000) body.max_tokens = agent.max_tokens;
 
     if (agent.model === 'deepseek-reasoner') {
       chatApi.chat(`${agent.base_url}/chat/completions`, agent.api_key, body, handleMessage, (data, err) => {
@@ -214,6 +214,7 @@
 
         if (err || (err === null && data === null)) {
           reasoning_content = '';
+          setTimeout(() => (document.querySelector('.msg-content > *:nth-child(1)').style.marginTop = '-1rem'));
         }
       });
     } else {
@@ -393,6 +394,9 @@
         const codeBlock = target.parentNode.querySelector('code');
         copyContent(codeBlock.textContent);
       }
+      setTimeout(() => {
+        document.querySelector('.msg-content > *:nth-child(1)').style.marginTop = '-1rem';
+      }, 1000);
     });
     // 监听滚动事件
     messageContainer.addEventListener('scroll', () => {
@@ -477,9 +481,9 @@
         </span>
       </div>
       <!-- 用户的输入可能和杂乱，需要格式化后展示，AI的回复格式很严谨，此处不考虑格式化，直接渲染 -->
-      <div class="content">
+      <div class="content msg-content">
         {#if reasoning_content && reasoning_content != '' && index === $msgs.length - 1 && $sending}
-          <div class="reasoning_content" bind:this={reasoning_content_ref}>{reasoning_content}</div>
+          <div class="reasoning_content" bind:this={reasoning_content_ref}><div>{reasoning_content}</div></div>
         {/if}
         {@html mdToHtml(item.content, item.role)}{#if $sending && item.content === ''}<span class="loading-cursor">|</span>{/if}
       </div>
@@ -505,11 +509,14 @@
     display: block;
     max-height: 4rem;
     overflow-y: auto;
-    padding: 200px;
     border-radius: 10px;
     background-color: var(--color-bg);
-    font-size: 0.9rem;
-    line-height: 1rem;
+    font-size: 0.8rem;
+    line-height: 0.8rem;
+  }
+
+  .reasoning_content div {
+    margin: 10px;
   }
 
   .ctrl-button {
