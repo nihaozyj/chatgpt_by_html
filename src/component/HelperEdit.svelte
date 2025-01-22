@@ -12,6 +12,9 @@
   // 为true时，表示不进行提交，点击保存后，通过事件返回修改后的智能体数据
   export let isSave = false;
 
+  // 解决上一个版本的历史记录中可能没有max_tokens属性的问题
+  'max_tokens' in agent || (agent.max_tokens = 100);
+
   const dispatch = createEventDispatcher();
 
   $: if (isOpen) {
