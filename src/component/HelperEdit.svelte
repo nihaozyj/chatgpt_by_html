@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import ResizableModal from './ResizableModal.svelte';
   import * as db from '../js/db.js';
   import * as Ag from '../js/agent.js';
@@ -13,13 +13,13 @@
   export let isSave = false;
 
   // 解决上一个版本的历史记录中可能没有max_tokens属性的问题
-  'max_tokens' in agent || (agent.max_tokens = 100);
 
   const dispatch = createEventDispatcher();
 
   $: if (isOpen) {
     db.isSpaceBarFocused.set(false);
     if (!agent && isSave) isOpen = false;
+    if (agent) 'max_tokens' in agent || (agent.max_tokens = -1);
   } else {
     db.isSpaceBarFocused.set(true);
     if (agent && typeof agent === 'object') {
